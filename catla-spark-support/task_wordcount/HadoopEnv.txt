@@ -1,0 +1,14 @@
+﻿Task init
+#master's IP address
+MasterHost 192.168.159.132
+#master's password
+MasterPassword Passw0rd
+#master's SSH port
+MasterPort 22
+#master's username
+MasterUser hadoop
+#Path of master's hadoop executable
+HadoopBin /usr/spark/bin/spark-submit
+# Root folder of jar files uploaded from user local computer; the folder must be created by Ubuntu root user manually; this system cannot automatically create the folder due to permission. 
+AppRoot /usr/spark_apps
+SparkUrl spark://master:7077
