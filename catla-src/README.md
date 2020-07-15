@@ -1,4 +1,4 @@
-## Catla-HS distribution
+## Catla-HS sources and distribution
 
 <b>src</b>: core source code of the project
 
