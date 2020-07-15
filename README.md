@@ -6,7 +6,7 @@
 ## Architecture
 <center>
 <img src="images/catla-architecture-new.jpg" alt="CatlaHS architecture"
-	title="Architecture of Catla" width="50%"  />
+	title="Architecture of Catla" width="80%"  />
 </center>
 
 <center>Fig.1 Architecture of CatlaHS</center>
