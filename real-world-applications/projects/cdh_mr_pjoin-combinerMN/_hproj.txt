@@ -1,0 +1,6 @@
+Id PJCombinerMN
+Description PJCombinerMN designed by Donghua Chen
+Inputs inputs
+Outputs outputs
+Jars jars
+Logs logs

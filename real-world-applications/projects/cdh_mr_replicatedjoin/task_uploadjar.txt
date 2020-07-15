@@ -1,0 +1,7 @@
+﻿Task upload
+#jar包所在的本地文件路径（就是用户自己的电脑）
+LocalJarPath jars/MyBigDataRes.jar
+#上到到master机器中APP_ROOT下的路径，这是相对路径
+RemoteJarPath MyBigDataRes.jar
+#如果存在，是否删除文件
+DeleteExistingFile true

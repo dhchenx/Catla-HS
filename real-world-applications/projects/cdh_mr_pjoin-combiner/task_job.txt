@@ -1,0 +1,15 @@
+﻿Task submit
+#同步模式和异步模式
+Async false
+#调用jar包的位置，在AppRoot配置下的jar包，这是相对路径
+JarRemotePath MyBigDataRes.jar
+#调用Jar包中某一个类（方法）
+MainClass cn.edu.bjtu.cdh.bigdata.research.join.PJCombiner
+#传递给该方法的参数，比如输入的hdfs路径、输出的路径及其他参数
+Args /data/cdh/research/join-realdata/input-smalldata /data/cdh/research/join-realdata/input-data /data/cdh/research/join-realdata/output-pjoin-combiner @jointype=inner @n=5
+#_SUCCESS标志所在的路径，这用来判断hadoop任务是否成功了
+FolderOfSuccessFlag /data/cdh/research/join-realdata/output-pjoin-combiner
+#输出的路径，若多个路径，可以后面用空格分开添加
+OutputHdfsFolders /data/cdh/research/join-realdata/output-pjoin-combiner
+#将hdfs输出文件下载到本地的文件夹
+OutputLocalRootFolder outputs

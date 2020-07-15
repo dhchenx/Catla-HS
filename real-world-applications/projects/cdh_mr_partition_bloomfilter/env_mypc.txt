@@ -1,0 +1,13 @@
+﻿Task init
+#master机器的IP
+MasterHost 192.168.100.91
+#master机器的密码
+MasterPassword Passw0rd
+#master机器的ssh端口
+MasterPort 22
+#master机器的用户名
+MasterUser hadoop
+#master机器安装hadoop路径下的bin/hadoop路径
+HadoopBin /usr/local/hadoop/bin/hadoop
+#jar包存放的根目录，注意：所有的上传的jar包都存放在这里，这个路径需要管理员在ubuntu下手动创建，该工具不能自动创建。
+AppRoot /usr/hadoop_apps
