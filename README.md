@@ -22,7 +22,7 @@
 
 
 ## Prerequisites
-1) You should run Catla in a Windows computer located in <b>the same network</b> as Hadoop clusters. It means Catla is able to access master host via network.
+1) You should run Catla in a Windows/Ubuntu computer located in <b>the same network</b> as Hadoop clusters. It means Catla is able to access master host via network.
 2) Standard <b>Java environment</b> on the computer should be properly installed. 
 3) Hadoop must enable [Yarn Log Aggregation](https://mapr.com/docs/51/AdministratorGuide/YARNLogAggregation-Enabli_28214137-d3e129.html) by setting value of 'yarn.log-aggregation-enable' to true. 
 4) Critical information of master host, like <b>username, userpassword, SSH port, etc.</b> must be known because Catla needs the information to run MapReduce jobs. 
@@ -31,14 +31,16 @@
 7) This project is built on Hadoop 2.7.2, which means it may work in all Hadoop 2.x.x versions. 
 
 ## Simple steps
-1) Copy Catla.jar from '/catla-dist' in the Github repo to 'examples' folder; thus, the example folders and Catla.jar are in the same folder. 
-2) Change master host's information in the file 'HadoopEnv.txt' according to your actual Hadoop cluster, such as master's IP, master's username, password, master port, Hadoop bin path, and root folder of App (the same as set in 6 of Prerequisites). 
-3) Open a Windows Command program, change current directory into the '/examples' folder by using 'CD' command
-4) Simply run the Java command as bellows: '<b>java -jar Catla.jar -tool task -dir task_wordcount</b>'. 
-5) After finished, the 'task_wordcount' folder should create a new folder 'downloaded_results' which stores the analyzing result of WordCount MapReduce job. 
-5) The above step is a simple demonstration example. [Advanced example?](https://github.com/dhchenx/Catla/blob/master/docs/catla-usage.md)
+<center>
+<img src="images/steps.jpg" alt="CatlaHS usage"
+	title="CatlaHS usage" width="60%"  />
+</center>
 
-## Anlysis using Catla
+<center>Fig.1 Usag of CatlaHS</center>
+
+ [Advanced example?](https://github.com/dhchenx/CatlaHS/blob/master/docs/catla-usage.md)
+
+## Anlysis using CatlaHS
 ### 1) Exhaustive search
 <center>
 <img src="images/catla-surfaceplot.jpg" alt="exhaustive search"
@@ -65,27 +67,9 @@
 
 ## Contributors
 This project is established upon the project <a href='https://github.com/apache/hadoop'>Apache Hadoop</a>, <a href='http://commons.apache.org/proper/commons-math/'>Apache Commons Math3</a> and <a href='https://github.com/apache/mina-sshd'>Apache MINA SSHD</a> under <a href='https://www.apache.org/licenses/LICENSE-2.0'>APACHE LICENSE, VERSION 2.0</a>. 
-<a id='cite'></a>
 
-## Citation
-<p>
-Donghua Chen, "An Open-Source Project for MapReduce Performance Self-Tuning," arXiv:1912.12456 [cs.DC], Dec. 2019. 
-</p>
-
-OR
-```
-@misc{chen2019opensource,
-    title={An Open-Source Project for MapReduce Performance Self-Tuning},
-    author={Donghua Chen},
-    year={2019},
-    eprint={1912.12456},
-    archivePrefix={arXiv},
-    primaryClass={cs.DC}
-}
-```
 
 ## LICENSE
 See the <a href='https://github.com/dhchenx/Catla/blob/master/LICENSE'>LICENSE</a> file for license rights and limitations (GNU GPLv3).
-
 
 
