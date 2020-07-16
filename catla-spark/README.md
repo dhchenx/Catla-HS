@@ -168,3 +168,17 @@ public final class JavaWordCount {
 
 ```
 
+## Tuning results
+
+A summary of time cost in different confirguration of parameters is saved in the history folder:
+
+```
+TimeStamp	Order	--total-executor-cores	--executor-memory	totalTimeCost
+1594892700468	1	1	512m	6458
+1594892730280	2	1	700m	6600
+1594892758427	3	2	512m	6365
+1594892785831	4	2	700m	6263
+
+```
+
+The two parameters 'total-executor-cores' and 'executor-memory' are the target to optimize in this case. 
