@@ -21,7 +21,7 @@ There are three mode of tasks in CatlaHS designed to automate configuration of S
 2) Project
 3) Optimize
 
-### submit a Spark task
+### (1) submit a Spark task
 ```java
         args=new String[] {
 				"-tool","task",
@@ -31,7 +31,7 @@ There are three mode of tasks in CatlaHS designed to automate configuration of S
 		CatlaRunner.main(args);
 ```
 
-### submit a Spark project
+### (2) submit a Spark project
 ```java
         args=new String[] {
 				"-tool","project",
@@ -42,7 +42,7 @@ There are three mode of tasks in CatlaHS designed to automate configuration of S
 		};
 		CatlaRunner.main(args);	
 ```
-### submit a Spark tuning project
+### (3) submit a Spark tuning project
 ```java
 	  args = new String[] { 
 					"-tool","tuning",
