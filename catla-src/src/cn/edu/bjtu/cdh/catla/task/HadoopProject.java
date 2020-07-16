@@ -192,6 +192,14 @@ public class HadoopProject {
 		he.setMasterUser(map.get("MasterUser"));
 		he.setHadoopBin(map.get("HadoopBin"));
 		he.setAppRoot(map.get("AppRoot"));
+		if(map.containsKey("AppType"))
+			he.setAppType(map.get("AppType"));
+		else 
+			he.setAppType("Hadoop");
+		if(map.keySet().contains("SparkUrl"))
+		{
+			he.setSparkUrl(map.get("SparkUrl"));
+		}
 		return he;
 	}
 
@@ -377,12 +385,18 @@ public class HadoopProject {
 		
 		System.out.println("waitForAllJobCompletion: "+waitForAllJobCompletion);
 
-		HadoopApp ha = new HadoopApp(he);
+		//HadoopApp ha = new HadoopApp(he);
+		
+		final String appType=he.getAppType();
+		
+		IApp ha = AppFactory.createApp(he, appType);
 
 		System.out.println("================Begin to submit tasks====================");
 		System.out.println("task number: " + this.getSubmitMaps().size());
 		for (int i = 0; i < this.getSubmitMaps().size(); i++) {
 
+			final int currentI=i;
+			
 			HadoopTask ht = MapToTask(this.getSubmitMaps().get(i));
 			
 			String currentTraceId="";
@@ -406,6 +420,17 @@ public class HadoopProject {
 				new_args[new_args.length-1]="@traceId="+currentTraceId;
 				ht.setArgs(new_args);
 				
+			}
+			
+			if(appType.equals("Spark")) {
+				String[] args=ht.getArgs();
+			    String[] new_args=new String[args.length+2];
+			    for (int x=0;x<args.length;x++) {
+			    	new_args[x]=args[x];
+			    }
+			    new_args[args.length]="@masterIP=master";
+			    new_args[args.length+1]="@historyUrl="+new SparkLog(he).getDonePath().replace("/", "");
+				ht.setArgs(new_args);
 			}
 			
 			this.getTraceIds().add(currentTraceId);
@@ -494,9 +519,13 @@ public class HadoopProject {
 			
 			if(ht.getTrace()!=null&& ht.getTrace().equals("true")) {
 				System.out.println(
-						"================Begin to detect if the task log is finised when Trace=true ====================");
+						"================Begin to detect if the Hadoop task log is finised when Trace=true ====================");
 				
 				counter=0;
+				
+				//Hadoop
+				if(appType.equals("Hadoop")) {
+					
 				
 				ht.setLogPath(this.getRootFolder()+"/history/log-"+currentTraceId);
 				
@@ -584,6 +613,95 @@ public class HadoopProject {
 				    }
 				
 			}
+			}
+			
+			if(appType.equals("Spark")) {
+				
+				
+				System.out.println(
+						"================Begin to detect if the Spark task log is finised when Trace=true ====================");
+				
+				counter=0;
+			 
+				ht.setLogPath(this.getRootFolder()+"/history/log-"+currentTraceId);
+				
+				if(!new File(ht.getLogPath()).exists())
+					new File(ht.getLogPath()).mkdirs();
+				
+				ht.saveToFile("submit", ht.getLogPath()+"/task_submit.txt");
+				
+				SparkLog hlog=new SparkLog(he);
+				
+				
+				TuningLog tlog=new TuningLog(this.getRootFolder());
+				
+				
+				CountDownLatch  cdl = new CountDownLatch (1);
+				Timer timer = new Timer();
+				timer.schedule(new TimerTask() {
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						
+						boolean success_flag = ha.isSuccess(ht);
+						
+						counter++;
+						System.out.println("Detecting " + (counter) + " if the Spark log is finished: " + success_flag);
+						if (success_flag) {
+							//this.cancel();
+							System.out.println("Finished Log? => " + success_flag);
+						
+							if (ht.getLogPath() != null && !ht.getLogPath().isEmpty()) {
+
+								String appId=((SparkApp)ha).getAppId();
+								String logFolder=rootFolder+"/history/log-"+traceId;
+								if(!new File(logFolder).exists()) {
+									new File(logFolder).mkdirs();
+								}
+								
+								hlog.downloadSparkLog2Local(appId, logFolder);
+								
+								System.out.println("Download Spark Log... Async: " + ht.getLogPath());
+								
+								writeFile(logFolder+"/iteration_"+(currentI+1),"");
+								
+							//	if(waitForAllJobCompletion)
+							//	cdl.countDown();
+								
+								
+							}
+
+						}
+						
+					
+						
+							this.cancel();
+
+							if(waitForAllJobCompletion)
+								cdl.countDown();
+						
+					
+					}
+
+				}, 5 * 1000, 2 * 1000);// delay, period
+			
+				
+				 try {
+					 if(waitForAllJobCompletion)
+				        cdl.await();
+
+				    } catch (InterruptedException ex) {
+				    	ex.printStackTrace();
+				    	
+				    }
+				
+			
+				
+				
+			}
+			
+			
+			
 			
 		}
 		

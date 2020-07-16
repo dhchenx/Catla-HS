@@ -1,7 +1,10 @@
 package cn.edu.bjtu.cdh.catla.task;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -28,7 +31,7 @@ public class SparkLog {
 	}
 
 	
-	private String donePath="/tmp/spark-log";
+	private String donePath="/spark-job-history";
 	
 	private long timeAppCost;
 	private long timeJobCost;
@@ -91,6 +94,44 @@ public class SparkLog {
 			ex.printStackTrace();
 		}
     	
+	}
+	
+	public void downloadSparkLog2Local(String appId,String localLogFolder) {
+		String hdfsPath=this.getDonePath()+"/"+appId;
+		try {
+		Configuration conf = new Configuration();
+		conf.set("fs.hdfs.impl", "org.apache.hadoop.hdfs.DistributedFileSystem");
+		conf.set("mapred.jop.tracker", "hdfs://" + this.env.getMasterHost() + ":9001");
+		conf.set("fs.defaultFS", "hdfs://" + this.env.getMasterHost() + ":" + this.env.getHdfsPort());
+		 FileSystem fs = FileSystem.get(conf);
+		
+		this.writeFromHDFS2Local(fs, hdfsPath,localLogFolder+"/"+appId);
+		List<String> lines = CatlaFileUtils
+				.readFileByLine(localLogFolder+"/"+appId);
+		process(lines);
+		
+		// time cost
+		
+		
+		
+		writeFile(localLogFolder+"/cost_"+this.getTimeAppCost(), this.getTimeAppCost()+"");
+		
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}
+    	
+	}
+	
+	private void writeFile(String path, String content) {
+
+		try {
+			BufferedWriter out = new BufferedWriter(new FileWriter(path));
+			out.write(content);
+			out.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	private void process(List<String> lines) {
@@ -187,18 +228,19 @@ public class SparkLog {
 	public static void main(String[] args) {
 		//
 		HadoopEnv he = new HadoopEnv();
-		he.setMasterHost("192.168.159.132");
-		he.setMasterPassword("Passw0rd"); 
+		he.setMasterHost("192.168.100.105");
+		he.setMasterPassword("123456"); 
 		he.setMasterPort(22); 
 		he.setMasterUser("hadoop");
-		he.setHadoopBin("/usr/spark/bin/spark-submit");
+		he.setHadoopBin("/home/bigdata/app/spark/bin/spark-submit");
 		he.setAppRoot("/usr/spark_apps");
 		he.setSparkUrl("spark://master:7077");
 		
 		//
 		SparkLog sparkLog=new SparkLog(he);
+		sparkLog.setDonePath("/spark-job-history");
 		//sparkLog.extractByLocal("C:/Users/douglaschan/Desktop/spark/app-20191016015640-0002");
-		sparkLog.extractByHDFS("app-20191017003836-0006", "C:/Users/douglaschan/Desktop/spark/tmp");
+		sparkLog.extractByHDFS("app-20200716095919-0001", "C:/Users/douglaschan/Desktop/spark/tmp");
 		
 		System.out.println("app Name: "+ sparkLog.getAppName());
 		System.out.println("app Id: "+ sparkLog.getAppId());
@@ -221,7 +263,8 @@ public class SparkLog {
 		System.out.println("time cost of full job: "+ df.format((maxTime-minTime) * 1.0 /1000/60) +" mins");
 		*/
 		
-		System.out.println("time cost of job: "+ df.format(sparkLog.getTimeJobCost() * 1.0 /1000/60) +" mins");
+		System.out.println("time cost of job: "+ df.format(sparkLog.getTimeAppCost() * 1.0 /1000/60) +" mins");
+		System.out.println("time cost of job: "+ df.format(sparkLog.getTimeAppCost() * 1.0 /1000) +" secs");
 		
 		System.out.println("job result: "+ sparkLog.getJobResult());
 		

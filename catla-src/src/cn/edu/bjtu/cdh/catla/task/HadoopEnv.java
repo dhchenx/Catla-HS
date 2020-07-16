@@ -9,6 +9,7 @@ public class HadoopEnv {
 	private int hdfsPort=9000;
 	
 	private String sparkUrl;
+	private String appType;
 	
 	private String hadoopBin="/usr/hadoop/bin/hadoop";
 	
@@ -75,6 +76,12 @@ public class HadoopEnv {
 	}
 	public void setSparkUrl(String sparkUrl) {
 		this.sparkUrl = sparkUrl;
+	}
+	public String getAppType() {
+		return appType;
+	}
+	public void setAppType(String appType) {
+		this.appType = appType;
 	}
 	
 	

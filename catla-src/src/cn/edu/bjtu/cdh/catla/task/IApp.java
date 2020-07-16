@@ -7,5 +7,7 @@ public interface IApp {
 	public boolean uploadJar(HadoopJar hj);
 	public boolean isSuccess(HadoopTask ht) ;
 	public boolean downloadResultToLocal(HadoopTask ht);
+	public boolean deleteInHDFS(String hdfsPath,boolean isRecursive);
+	public boolean existInHDFS(String hdfsPath);
 	
 }

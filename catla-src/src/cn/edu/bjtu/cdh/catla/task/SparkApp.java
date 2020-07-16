@@ -1,21 +1,20 @@
 package cn.edu.bjtu.cdh.catla.task;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.text.DecimalFormat;
 import java.util.Arrays;
-import java.util.List;
-import java.util.logging.Level;
+import java.util.Map;
 import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
@@ -23,6 +22,8 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.LocatedFileStatus;
 import org.apache.hadoop.fs.RemoteIterator;
 import org.apache.hadoop.io.IOUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import org.apache.sshd.client.SshClient;
 import org.apache.sshd.client.channel.ChannelExec;
@@ -32,21 +33,25 @@ import org.apache.sshd.client.future.ConnectFuture;
 import org.apache.sshd.client.session.ClientSession;
 import org.apache.sshd.client.subsystem.sftp.SftpClient;
 import org.apache.sshd.client.subsystem.sftp.SftpClientFactory;
-
-import org.slf4j.LoggerFactory;
 import org.apache.sshd.client.subsystem.sftp.SftpClient.DirEntry;
 
-public class HadoopApp implements IApp {
+public class SparkApp implements IApp {
+	
+	
 	private HadoopEnv hadoopEnv;
 
-	public HadoopApp(HadoopEnv he) {
+	public SparkApp(HadoopEnv he) {
 		this.hadoopEnv = he;
 	}
+	
+	private String allOutputResult;
 	
 	 
 	public String executeTask(HadoopTask ht) {
 		SshClient client = SshClient.setUpDefaultClient();
-		
+		//spark-submit --class org.apache.spark.examples.JavaWordCount 
+		//--master spark://master:7077 --executor-memory 500m --total-executor-cores 3 /usr/spark_apps/SparkTest.jar hdfs://master:9000/data/cdh/examples/wordcount/input
+	
 		try {
 			
 			int other_len=0;
@@ -55,17 +60,18 @@ public class HadoopApp implements IApp {
 
 			String[] hadoopCMD = new String[4 + ht.getArgs().length+other_len];
 			hadoopCMD[0] = this.hadoopEnv.getHadoopBin();
-			hadoopCMD[1] = "jar";
-			hadoopCMD[2] = ht.getJarRemotePath();
-			hadoopCMD[3] = ht.getMainClass();
+			hadoopCMD[1] =  "--class "+ ht.getMainClass();
+			hadoopCMD[2] = "--master "+ this.hadoopEnv.getSparkUrl();
 
-			
 			
 			if(other_len!=0) {
 				for(int i=0;i<ht.getOtherArgs().length;i++) {
-					hadoopCMD[4+i]=ht.getOtherArgs()[i];
+					hadoopCMD[3+i]=ht.getOtherArgs()[i];
 				}
 			}
+			
+
+			hadoopCMD[3+other_len] = ht.getJarRemotePath();
 			
 			if (ht.getArgs() != null)
 				for (int i = 0; i < ht.getArgs().length; i++)
@@ -82,7 +88,7 @@ public class HadoopApp implements IApp {
 			
 		
 
-			System.out.println("hadoopCmdStr = " + hadoopCMDStr);
+			System.out.println("sparkCmdStr = " + hadoopCMDStr);
 
 			String cmd = hadoopCMDStr;
 			client = SshClient.setUpDefaultClient();
@@ -143,6 +149,8 @@ public class HadoopApp implements IApp {
 						}
 					}
 				}
+				
+				allOutputResult=result+"\n"+err_result;
 					
 				return result;
 
@@ -357,7 +365,7 @@ public class HadoopApp implements IApp {
 		
 		try {
 			
-			System.out.println("check If successfully done...");
+			System.out.println("check If Spark job successfully done...");
 			
 			//obtain all files
 			Configuration conf = new Configuration();
@@ -366,29 +374,52 @@ public class HadoopApp implements IApp {
 			conf.set("fs.defaultFS", "hdfs://" + this.hadoopEnv.getMasterHost() + ":" + this.hadoopEnv.getHdfsPort());
 			FileSystem fs = FileSystem.get(conf);
 			
-			if(!fs.exists(new org.apache.hadoop.fs.Path(ht.getFolderOfSuccessFlag()))){
-				return false;
+			
+			//System.out.println("successFlagFolder = " +this.get);
+
+			SparkLog sparkLog=new SparkLog(this.hadoopEnv);
+			
+			String currentTraceId="";
+			Map<String,String> app_args=InjectVars.getVars(ht.getArgs());
+			if (app_args.containsKey("traceId")) {
+				currentTraceId=app_args.get("traceId");
 			}
 			
-			String successFlagFolder=ht.getFolderOfSuccessFlag();
-			
-			if(ht.getFolderOfSuccessFlag()!=null&&ht.getFolderOfSuccessFlag().startsWith("/")) {
-				successFlagFolder= "hdfs://"+this.hadoopEnv.getMasterHost()+":"+this.hadoopEnv.getHdfsPort()+""+ ht.getFolderOfSuccessFlag();
-			}
-			
-			System.out.println("successFlagFolder = " +successFlagFolder);
-
-			RemoteIterator<LocatedFileStatus> fileStatusListIterator = fs
-					.listFiles(new org.apache.hadoop.fs.Path(successFlagFolder), true);
-
-			while (fileStatusListIterator.hasNext()) {
-				LocatedFileStatus fileStatus = fileStatusListIterator.next();
-
-				//System.out.println("path=" + fileStatus.getPath().getName());
-				if (fileStatus.getPath().getName().startsWith("_SUCCESS")) {
+			if(!currentTraceId.equals("")) {
+				 
+				System.out.println("currentTraceId="+currentTraceId);
+				
+			if(fs.exists(new org.apache.hadoop.fs.Path(sparkLog.getDonePath() + "/spark-id-" + currentTraceId))) {
+				
+				org.apache.hadoop.fs.Path pt=new org.apache.hadoop.fs.Path(sparkLog.getDonePath() + "/spark-id-" + currentTraceId);
+				 
+				BufferedReader br=new BufferedReader(new InputStreamReader(fs.open(pt)));
+				 String appId="";
+				try {
+				 
+				  appId=br.readLine().trim();
+				   
+				} finally {
+				  // you should close out the BufferedReader
+				  br.close();
+				}
+				appId=appId.replace("\n","").trim();
+				
+				this.setAppId(appId);
+				
+				System.out.println(appId);
+				
+				if(fs.exists(new org.apache.hadoop.fs.Path(sparkLog.getDonePath() + "/"+appId))) {
+					
 					return true;
 				}
+				
+				return false;
 			}
+			}
+			
+			
+		
 
 			return false;
 
@@ -461,5 +492,80 @@ public class HadoopApp implements IApp {
 
 		return false;
 	}
+	
+	 
+	
+	private String appId;
+	
+	public static void main(String[] args) {
+		//spark-submit --class org.apache.spark.examples.JavaWordCount 
+		//--master spark://master:7077 --executor-memory 500m --total-executor-cores 3 /usr/spark_apps/SparkTest.jar hdfs://master:9000/data/cdh/examples/wordcount/input
+		Logger.getRootLogger().setLevel(Level.OFF);
+		
+		HadoopEnv he = new HadoopEnv();
+		he.setMasterHost("192.168.159.132");
+		he.setMasterPassword("Passw0rd"); 
+		he.setMasterPort(22); 
+		he.setMasterUser("hadoop");
+		he.setHadoopBin("/usr/spark/bin/spark-submit");
+		he.setAppRoot("/usr/spark_apps");
+		he.setSparkUrl("spark://master:7077");
+		
+		SparkApp sapp=new SparkApp(he);
+		
+		HadoopTask  ht=new HadoopTask();
+		ht.setArgs(new String[] {"hdfs://master:9000/data/cdh/examples/wordcount/input"});
+		ht.setMainClass("org.apache.spark.examples.JavaWordCount");
+		ht.setOtherArgs(new String[] {
+				"--executor-memory","500m",
+				"--total-executor-cores", "3"
+				});
+		ht.setJarRemotePath(he.getAppRoot() + "/"+ "SparkTest.jar");
+		ht.setAsync(false);
+		
+		String result=sapp.executeTask(ht);
+		
+		//String allOutputResult=sapp.getAllOutputResult();
+		
+		System.out.println("result = "+result);
+		
+		System.out.println("app Id: "+sapp.getAppId());
+		
+		SparkLog sparkLog=new SparkLog(he);
+		sparkLog.extractByHDFS(sapp.getAppId(),  "C:/Users/douglaschan/Desktop/spark/tmp");
+		
+		DecimalFormat df = new DecimalFormat("#.00");
+		
+		System.out.println("Time cost of Spark App: "+ df.format(sparkLog.getTimeAppCost() * 1.0 /1000/60) +" mins");
+		
+		
+	}
+	
+	private String findAppId(String result) {
+		String[] lines=result.split("\n");
+		for(int i=0;i<lines.length;i++) {
+			if(lines[i].toLowerCase().contains("Connected to Spark Cluster".toLowerCase())) {
+				int index=lines[i].indexOf("app-");
+				return lines[i].substring(index).trim();
+			}
+		}
+		return "";
+	}
 
+	public String getAllOutputResult() {
+		return allOutputResult;
+	}
+
+	public void setAllOutputResult(String allOutputResult) {
+		this.allOutputResult = allOutputResult;
+	}
+
+	public String getAppId() {
+		return appId;
+	}
+
+	public void setAppId(String appId) {
+		this.appId = appId;
+	}
+	
 }
