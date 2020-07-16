@@ -15,7 +15,7 @@ public class SparkTaskExample {
 		CatlaRunner.main(args);
 	}
 	
-	public static void main(String[] args) {
+	public static void main2(String[] args) {
 		// Execute a series of complicated MapReduce job operations based on project template
 		args=new String[] {
 				"-tool","project",
@@ -24,10 +24,31 @@ public class SparkTaskExample {
 				"-download","true",
 				"-sequence","true"
 		};
-		
-		CatlaRunner.main(args);
-		
+		CatlaRunner.main(args);	
 	}
+	
+	public static void main(String[] args) {
+
+		//tuning using Exhaustive Search
+		try {
+			
+		args = new String[] { 
+					"-tool","tuning",
+					"-dir", "C:\\Users\\douglaschan\\Desktop\\spark\\tuning_wordcount_spark",
+					"-clean", "true", 
+					"-group", "wordcount", 
+					"-upload","false",
+					"-uploadjar","true",
+				};
+			
+			CatlaRunner.main(args);
+			
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}
+
+	}
+	
 }
 
 

@@ -1,0 +1,12 @@
+﻿Task submit
+Async false
+JarRemotePath SparkTest.jar
+MainClass org.apache.spark.examples.JavaWordCount
+Args /cdh/tuning/wordcount/input
+FolderOfSuccessFlag /cdh/tuning/wordcount/output 
+OutputHdfsFolders  /cdh/tuning/wordcount/output
+OutputLocalRootFolder outputs
+OtherArgs 
+LogPath history
+Trace true
+JobType Spark

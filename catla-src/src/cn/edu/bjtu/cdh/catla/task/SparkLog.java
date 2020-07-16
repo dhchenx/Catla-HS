@@ -1,14 +1,17 @@
 package cn.edu.bjtu.cdh.catla.task;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
@@ -96,6 +99,19 @@ public class SparkLog {
     	
 	}
 	
+	public void analyzeLog(String localPath) {
+	
+		try {
+		
+		List<String> lines = CatlaFileUtils
+				.readFileByLine(localPath);
+		process(lines);
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}
+    	
+	}
+	
 	public void downloadSparkLog2Local(String appId,String localLogFolder) {
 		String hdfsPath=this.getDonePath()+"/"+appId;
 		try {
@@ -122,6 +138,32 @@ public class SparkLog {
     	
 	}
 	
+	public void downloadSparkLog2Local_Indiv(String appId,String localLogFolder) {
+		String hdfsPath=this.getDonePath()+"/"+appId;
+		try {
+		Configuration conf = new Configuration();
+		conf.set("fs.hdfs.impl", "org.apache.hadoop.hdfs.DistributedFileSystem");
+		conf.set("mapred.jop.tracker", "hdfs://" + this.env.getMasterHost() + ":9001");
+		conf.set("fs.defaultFS", "hdfs://" + this.env.getMasterHost() + ":" + this.env.getHdfsPort());
+		 FileSystem fs = FileSystem.get(conf);
+		
+		this.writeFromHDFS2Local(fs,  "hdfs://" + this.env.getMasterHost() + ":" + this.env.getHdfsPort()+hdfsPath,localLogFolder+"/"+appId);
+		List<String> lines = CatlaFileUtils
+				.readFileByLine(localLogFolder+"/"+appId);
+		process(lines);
+		
+		// time cost
+		
+		
+		
+		writeFile(localLogFolder+"/cost_"+this.getTimeAppCost(), this.getTimeAppCost()+"");
+		
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}
+    	
+	}
+	
 	private void writeFile(String path, String content) {
 
 		try {
@@ -131,6 +173,44 @@ public class SparkLog {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+	
+	public String obtainAppId(String traceId) {
+	
+		try {
+		//obtain all files
+		Configuration conf = new Configuration();
+		conf.set("fs.hdfs.impl", "org.apache.hadoop.hdfs.DistributedFileSystem");
+		conf.set("mapred.jop.tracker", "hdfs://" + this.env.getMasterHost() + ":9001");
+		conf.set("fs.defaultFS", "hdfs://" + this.env.getMasterHost() + ":" + this.env.getHdfsPort());
+		FileSystem fs = FileSystem.get(conf);
+		
+		
+		//System.out.println("successFlagFolder = " +this.get);
+
+			
+		if(fs.exists(new org.apache.hadoop.fs.Path(this.getDonePath() + "/spark-id-" + traceId))) {
+			
+			org.apache.hadoop.fs.Path pt=new org.apache.hadoop.fs.Path(this.getDonePath() + "/spark-id-" + traceId);
+			 
+			BufferedReader br=new BufferedReader(new InputStreamReader(fs.open(pt)));
+			 String appId="";
+			try {
+			 
+			  appId=br.readLine().trim();
+			   
+			} finally {
+			  // you should close out the BufferedReader
+			  br.close();
+			}
+			appId=appId.replace("\n","").trim();
+			return appId;
+		}else
+			return null;
+		}catch(Exception ex) {
+			ex.printStackTrace();
+			return null;
 		}
 	}
 	

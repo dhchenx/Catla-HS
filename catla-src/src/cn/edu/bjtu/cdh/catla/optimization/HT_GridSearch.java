@@ -6,6 +6,8 @@ import java.util.Map;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
 
+import cn.edu.bjtu.cdh.catla.task.HadoopEnv;
+import cn.edu.bjtu.cdh.catla.task.HadoopProject;
 import cn.edu.bjtu.cdh.catla.tuning.HadoopTuning;
 import cn.edu.bjtu.cdh.catla.utils.CatlaFileUtils;
 
@@ -19,6 +21,21 @@ public class HT_GridSearch implements ITaskOptimizer {
 
 	private double innerCost;
 
+	public static HadoopEnv MapToEnv(Map<String, String> map) {
+		HadoopEnv he = new HadoopEnv();
+		he.setMasterHost(map.get("MasterHost"));
+		he.setMasterPassword(map.get("MasterPassword"));
+		he.setMasterPort(Integer.parseInt(map.get("MasterPort")));
+		he.setMasterUser(map.get("MasterUser"));
+		he.setHadoopBin(map.get("HadoopBin"));
+		he.setAppRoot(map.get("AppRoot"));
+		if(map.keySet().contains("SparkUrl"))
+		{
+			he.setSparkUrl(map.get("SparkUrl"));
+		}
+		return he;
+	}
+	
 	@Override
 	public double[] optimize(MultivariateFunction func, int maxInteration, double[] initValues, double[] lowerBounds,
 			double[] upperBounds) {
@@ -42,8 +59,22 @@ public class HT_GridSearch implements ITaskOptimizer {
 					useParameters[i] = lines.get(i);
 			}
 		}
-
-		htuning.createOtherArgPairs(useParameters);
+		HadoopProject hp1 = HadoopProject.createInstance(new
+				  File(dirFolder).getAbsolutePath());
+		
+		HadoopEnv he=MapToEnv(hp1.getEnvMaps().get(0));
+		//support spark
+		String appType=he.getAppType();
+		if(appType.equals("Spark")) {
+			htuning.createSparkOtherArgPairs(useParameters);
+		}else
+		if(appType.equals("Hadoop")) {
+			htuning.createHadoopOtherArgPairs(useParameters);
+		}else {
+			System.out.println("No valid platform name!");
+		}
+		
+		
 
 		double bestSolution = Double.MAX_VALUE;
 		double[] bestV = null;
@@ -51,7 +82,13 @@ public class HT_GridSearch implements ITaskOptimizer {
 
 			String otherArgs = htuning.getOtherArgLists().get(i);
 			System.out.println("other args: " + otherArgs);
-			Map<String, String> currentParameters = htuning.obtainJobArgs(otherArgs);
+			Map<String,String> currentParameters=null;
+			
+			if(appType.equals("Hadoop")) {
+				currentParameters=htuning.obtainHadoopJobArgs(otherArgs);
+			}else if (appType.equals("Spark")) {
+				currentParameters=htuning.obtainSparkJobArgs(otherArgs);
+			}
 
 			double[] v = new double[useParameters.length];
 			for (int j = 0; j < useParameters.length; j++) {

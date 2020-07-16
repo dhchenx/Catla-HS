@@ -1,0 +1,6 @@
+Id A Spark Project for WordCount
+Description This is a demo Spark project for WordCount - Donghua Chen
+Inputs inputs
+Outputs outputs
+Jars jars
+Logs logs

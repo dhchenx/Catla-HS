@@ -1,0 +1,4 @@
+﻿Task upload
+LocalJarPath jars/SparkTest.jar
+RemoteJarPath SparkTest.jar
+DeleteExistingFile true

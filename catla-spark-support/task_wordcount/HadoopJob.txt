@@ -1,16 +1,16 @@
 ﻿Task submit
 #Indicate whether the ouput is sync or async during the job running
-Async False
+Async true
 #Set the jar path in remote Ubuntu system
 JarRemotePath SparkTest.jar
 #Set main class executed in Hadoop jar command
 MainClass org.apache.spark.examples.JavaWordCount
 #Set input parmaters of MapReduce job
-Args /data/cdh/examples/wordcount/input
+Args /cdh/tuning/wordcount/input @traceId=12345678 @masterIP=192.168.100.105 @historyUrl=spark-job-history
 #Set folder path of _SUCCESS file when detecting whether the task is successfully finished
-FolderOfSuccessFlag /data/cdh/tuning/wordcount/output
+FolderOfSuccessFlag /cdh/tuning/wordcount/output
 #Set the analyzing result folder in HDFS; multiple folders are supported with spaces. 
-OutputHdfsFolders  /data/cdh/tuning/wordcount/output
+OutputHdfsFolders  /cdh/tuning/wordcount/output
 #Set the local output folder to which the analyzing result is downloaded
 OutputLocalRootFolder outputs
-OtherArgs --executor-memory 500m --total-executor-cores 3
+OtherArgs --executor-memory 512m --total-executor-cores 2

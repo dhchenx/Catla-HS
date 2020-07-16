@@ -11,6 +11,7 @@ import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.math3.analysis.MultivariateFunction;
 
+import cn.edu.bjtu.cdh.catla.task.HadoopEnv;
 import cn.edu.bjtu.cdh.catla.task.HadoopLog;
 import cn.edu.bjtu.cdh.catla.task.HadoopProject;
 import cn.edu.bjtu.cdh.catla.task.HadoopTask;
@@ -77,7 +78,25 @@ public class HadoopOptimizer {
 	}
 	
 	 static int iter_counter=0;
-	
+
+		public static HadoopEnv MapToEnv(Map<String, String> map) {
+			HadoopEnv he = new HadoopEnv();
+			he.setMasterHost(map.get("MasterHost"));
+			he.setMasterPassword(map.get("MasterPassword"));
+			he.setMasterPort(Integer.parseInt(map.get("MasterPort")));
+			he.setMasterUser(map.get("MasterUser"));
+			he.setHadoopBin(map.get("HadoopBin"));
+			he.setAppRoot(map.get("AppRoot"));
+			if(map.keySet().contains("SparkUrl"))
+			{
+				he.setSparkUrl(map.get("SparkUrl"));
+			}
+			if(map.containsKey("AppType"))
+				he.setAppType(map.get("AppType"));
+			else 
+				he.setAppType("Hadoop");
+			return he;
+		}
 	public static void main(String[] args) throws Exception {
 		
 		if(args.length==0) {
@@ -235,6 +254,11 @@ public class HadoopOptimizer {
 			
 			final String projectFolder=dirFolder;
 			
+			HadoopProject hp1 = HadoopProject.createInstance(new
+					  File(dirFolder).getAbsolutePath());
+			HadoopEnv he=MapToEnv(hp1.getEnvMaps().get(0));
+			//support spark
+			final String appType=he.getAppType();
 		
 			final HadoopTimeCostFunction taskFunc = new HadoopTimeCostFunction(htuning.getParams(), useParameters,lowerBounds,upperBounds) {
 				         @Override
@@ -251,7 +275,13 @@ public class HadoopOptimizer {
 				        	 System.out.println();
 				        	 System.out.println("Current Parameters: "+currentArgStr);
 				        	 
-				        	 Map<String,String> currentParameters=htuning.obtainJobArgs(currentArgStr);
+				        	
+				        	 Map<String,String> currentParameters=null;
+								if(appType.equals("Hadoop")) {
+									currentParameters=htuning.obtainHadoopJobArgs(currentArgStr);
+								}else if (appType.equals("Spark")) {
+									currentParameters=htuning.obtainSparkJobArgs(currentArgStr);
+								}
 				        	 
 				        	 for (Map.Entry<String,String> entry : currentParameters.entrySet())  
 							 {

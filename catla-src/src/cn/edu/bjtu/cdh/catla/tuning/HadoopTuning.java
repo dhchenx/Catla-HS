@@ -4,8 +4,10 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.file.DirectoryStream;
@@ -22,8 +24,12 @@ import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 
+import cn.edu.bjtu.cdh.catla.task.HadoopEnv;
 import cn.edu.bjtu.cdh.catla.task.HadoopProject;
 import cn.edu.bjtu.cdh.catla.task.HadoopTask;
+import cn.edu.bjtu.cdh.catla.task.SparkApp;
+import cn.edu.bjtu.cdh.catla.task.SparkLog;
+import cn.edu.bjtu.cdh.catla.utils.CatlaFileUtils;
 import cn.edu.bjtu.cdh.catla.utils.UnicodeReader;
 
 public class HadoopTuning {
@@ -102,7 +108,7 @@ public class HadoopTuning {
 	
 	private Map<String,String> aliasMap;
 
-	public void createOtherArgPairs(String[] parameters) {
+	public void createHadoopOtherArgPairs(String[] parameters) {
 		
 		aliasMap=new HashMap<String,String>();
 		
@@ -140,9 +146,9 @@ public class HadoopTuning {
 							}else if(tp.getNumberType().equals(TuningParameter.INT)) {
 								v=new DecimalFormat("#").format(Integer.parseInt(v));
 							}else if(tp.getNumberType().equals(TuningParameter.STRING)) {
-								v=k+"";
+								v=tp.getValueSet()[k]+"";
 							}else {
-								v=k+"";
+								v=tp.getValueSet()[k]+"";
 							}
 							
 							vs.add(v);
@@ -193,6 +199,113 @@ public class HadoopTuning {
 				for (int j = 0; j < valueSets.get(start + 1).size(); j++) {
 					String line = tempList.get(i);
 					line += "-D " + pSets.get(start + 1) + "=" + valueSets.get(start+1).get(j) + " ";
+					tempList2.add(line);
+				}
+			}
+			tempList=tempList2;
+		}
+		
+		System.out.println("--all parameters--");
+		for(int i=0;i<tempList.size();i++) {
+			
+			System.out.println(tempList.get(i));
+		}
+		
+		 this.setOtherArgLists(tempList);
+		 
+	}
+	
+	public void createSparkOtherArgPairs(String[] parameters) {
+		
+		aliasMap=new HashMap<String,String>();
+		
+		List<String> pSets = new ArrayList<String>();
+		List<String> pTSets = new ArrayList<String>();
+		List<List<String>> valueSets = new ArrayList<List<String>>();
+
+		for (int i = 0; i < params.size(); i++) {
+			TuningParameter tp = params.get(i);
+			for (int j = 0; j < parameters.length; j++) {
+				if (parameters[j].equals(tp.getName())) {
+					pSets.add(tp.getName());
+					pTSets.add(tp.getNumberType());
+					if (tp.getType().equals(TuningParameter.RANGE)) {
+						List<String> vs = new ArrayList<String>();
+						for (double k = tp.getMin(); k <= tp.getMax(); k += tp.getStep()) {
+							String new_k=k+"";
+							if(tp.getNumberType().equals(TuningParameter.FLOAT)) {
+								new_k=new DecimalFormat("#.00").format(k);
+							}else if(tp.getNumberType().equals(TuningParameter.INT)) {
+								new_k=new DecimalFormat("#").format(k);
+							}
+							vs.add(new_k + "");
+						}
+						valueSets.add(vs);
+						
+					}
+					if (tp.getType().equals(TuningParameter.ARRAY)) {
+						List<String> vs = new ArrayList<String>();
+						for (int k = 0; k < tp.getValueSet().length; k++) {
+							String v=tp.getValueSet()[k];
+							
+							if(tp.getNumberType().equals(TuningParameter.FLOAT)) {
+								v=new DecimalFormat("#.00").format(Double.parseDouble(v));
+							}else if(tp.getNumberType().equals(TuningParameter.INT)) {
+								v=new DecimalFormat("#").format(Integer.parseInt(v));
+							}else if(tp.getNumberType().equals(TuningParameter.STRING)) {
+								v=tp.getValueSet()[k]+"";
+							}else {
+								v=tp.getValueSet()[k]+"";
+							}
+							
+							vs.add(v);
+						}
+						valueSets.add(vs);
+						if(tp.getAlias()!=null&&tp.getAlias().length!=0)
+							for(int k=0;k<tp.getAlias().length;k++)
+									aliasMap.put(tp.getValueSet()[k], tp.getAlias()[k]);
+						
+					}
+					if (tp.getType().equals(TuningParameter.FIXED_VALUE)) {
+						List<String> vs = new ArrayList<String>();
+						
+						String v=tp.getValue();
+						
+						if(tp.getNumberType().equals(TuningParameter.FLOAT)) {
+							v=new DecimalFormat("#.00").format(Double.parseDouble(v));
+						}else if(tp.getNumberType().equals(TuningParameter.INT)) {
+							v=new DecimalFormat("#").format(Integer.parseInt(v));
+						}else if(tp.getNumberType().equals(TuningParameter.STRING)) {
+							v=v+"";
+						}else {
+							v=v+"";
+						}
+						
+						vs.add(v);
+						valueSets.add(vs);
+					}
+
+				}
+			}
+		}
+
+		int start = 0;
+		
+		
+		List<String> tempList = new ArrayList<String>();
+		for (int i = 0; i < valueSets.get(start).size(); i++) {
+			
+			String line = "--" + pSets.get(start) + "=" + valueSets.get(start).get(i) + " ";
+			tempList.add(line);
+			
+		}
+
+		for (start = 0; start < pSets.size() - 1; start++) {
+			List<String> tempList2 = new ArrayList<String>();
+			for (int i = 0; i < tempList.size(); i++) {
+				for (int j = 0; j < valueSets.get(start + 1).size(); j++) {
+					String line = tempList.get(i);
+					line += "--" + pSets.get(start + 1) + "=" + valueSets.get(start+1).get(j) + " ";
 					tempList2.add(line);
 				}
 			}
@@ -305,6 +418,8 @@ public class HadoopTuning {
 							tp.setType(TuningParameter.ARRAY);
 							tp.setNumberType(vtype);
 							String[] ranges = this.getRange(value, "{", "}").split(",");
+							
+							System.out.println(value);
 
 							tp.setMax(-1);
 							tp.setMin(-1);
@@ -356,7 +471,7 @@ public class HadoopTuning {
 
 	}
 	
-	public Map<String,String> obtainJobArgs(String line){
+	public Map<String,String> obtainHadoopJobArgs(String line){
 		
 		Map<String,String> map=new HashMap<String,String>();
 		
@@ -378,6 +493,35 @@ public class HadoopTuning {
 				otherArgs+="-D "+fs[i]+" ";
 				map.put(key.trim(),value.trim());
 			}
+		}
+		
+		otherArgs=otherArgs.trim();
+		
+		map.put("OtherArgs", otherArgs);
+		
+		return map;
+		
+	}
+	
+public Map<String,String> obtainSparkJobArgs(String line){
+		
+		Map<String,String> map=new HashMap<String,String>();
+		
+		String[] fs=line.split(" ");
+		String otherArgs="";
+		for(int i=0;i<fs.length;i++) {
+			fs[i]=fs[i].trim();
+			if(fs[i].isEmpty())
+				continue;
+			
+			if(!fs[i].contains("="))
+				continue;
+			
+			String key=fs[i].substring(0,fs[i].indexOf("=")).trim();
+			String value=fs[i].substring(fs[i].indexOf("=")+1).trim();
+			
+			map.put(key.replace("$", ""),value.trim());
+			
 		}
 		
 		otherArgs=otherArgs.trim();
@@ -420,6 +564,25 @@ public class HadoopTuning {
 		  Files.delete(path);
 		}
 
+	public static HadoopEnv MapToEnv(Map<String, String> map) {
+		HadoopEnv he = new HadoopEnv();
+		he.setMasterHost(map.get("MasterHost"));
+		he.setMasterPassword(map.get("MasterPassword"));
+		he.setMasterPort(Integer.parseInt(map.get("MasterPort")));
+		he.setMasterUser(map.get("MasterUser"));
+		he.setHadoopBin(map.get("HadoopBin"));
+		he.setAppRoot(map.get("AppRoot"));
+		if(map.keySet().contains("SparkUrl"))
+		{
+			he.setSparkUrl(map.get("SparkUrl"));
+		}
+		if(map.containsKey("AppType"))
+			he.setAppType(map.get("AppType"));
+		else 
+			he.setAppType("Hadoop");
+		return he;
+	}
+	
 	public static void main(String[] args) throws IOException {
 
 		if(args.length==0) {
@@ -432,6 +595,8 @@ public class HadoopTuning {
 				"-continue","true"
 			};
 		}
+		
+		
 
 		URL rootUrl = HadoopTask.class.getProtectionDomain().getCodeSource().getLocation();
 		String jarFolder = URLDecoder.decode(rootUrl.getPath(), "utf-8");
@@ -455,8 +620,6 @@ public class HadoopTuning {
 			}
 		}
 		
-		
-
 		if (!new File(dirFolder).exists()) {
 			System.out.println("Folder: " + dirFolder + " does not exist.");
 			return;
@@ -512,6 +675,12 @@ public class HadoopTuning {
 		HadoopTuning htuning = new HadoopTuning(dirFolder);
 		htuning.loadParameters();
 		
+		HadoopProject hp1 = HadoopProject.createInstance(new
+				  File(dirFolder).getAbsolutePath());
+		HadoopEnv he=MapToEnv(hp1.getEnvMaps().get(0));
+		//support spark
+		String appType=he.getAppType();
+		
 		String quickTuningCofigPath=dirFolder+"/tuning/current.txt";
 		String[] useParameters=new String[] {};
 		
@@ -527,7 +696,15 @@ public class HadoopTuning {
 				}
 		 }
 		
-		htuning.createOtherArgPairs(useParameters);
+		if(appType.equals("Spark")) {
+			htuning.createSparkOtherArgPairs(useParameters);
+		}else
+		if(appType.equals("Hadoop")) {
+			htuning.createHadoopOtherArgPairs(useParameters);
+		}else {
+			System.out.println("No valid platform name!");
+		}
+		
 		String argStr="";
 		for(int i=0;i<htuning.getOtherArgLists().size();i++) {
 			argStr+=htuning.getOtherArgLists().get(i)+"\r\n";
@@ -538,6 +715,9 @@ public class HadoopTuning {
 			new File(progressFolder).mkdirs();
 		
 		writeFile(progressFolder+"/running_parameters.txt",argStr);
+		
+		List<String> spark_id_list=new ArrayList<String>();
+		List<String> spark_log_list=new ArrayList<String>();
 		
 		if(htuning.getOtherArgLists()!=null&&htuning.getOtherArgLists().size()>0) {
 			
@@ -557,9 +737,13 @@ public class HadoopTuning {
 				
 				String otherArgs=htuning.getOtherArgLists().get(i);
 				
-				Map<String,String> currentParameters=htuning.obtainJobArgs(otherArgs);
+				Map<String,String> currentParameters=null;
 				
-			
+				if(appType.equals("Hadoop")) {
+					currentParameters=htuning.obtainHadoopJobArgs(otherArgs);
+				}else if (appType.equals("Spark")) {
+					currentParameters=htuning.obtainSparkJobArgs(otherArgs);
+				}
 				
 				System.out.println("Using current job's parameter list as below: ");
 				 for (Map.Entry<String,String> entry : currentParameters.entrySet())  
@@ -635,17 +819,98 @@ public class HadoopTuning {
 				writeFile(progressFolder+"/running_traceId.txt",hp.getRunningTraceId()+"");
 				
 				if(flag) {
-					long timecost=tl.getTimeCost(hp.getRunningTraceId());
-					System.out.println("----------TIME COST="+timecost+"--------------");
+					if(appType.equals("Hadoop")) {
+						long timecost=tl.getTimeCost(hp.getRunningTraceId());
+						System.out.println("----------Hadoop jos's time cost="+timecost+"--------------");
+						
+					}else if (appType.equals("Spark")) {
+						
+						String historyFolder=hp.getRootFolder()+"/history/log-"+hp.getRunningTraceId();
+						SparkLog sparkLog=new SparkLog(he);;
+						String appId=sparkLog.obtainAppId(hp.getRunningTraceId());
+						
+						if(!new File(historyFolder).exists()) {
+							new File(historyFolder).mkdirs();
+						}
+						
+						 writeFile(historyFolder+"/spark.app.id",appId);
+						 
+						 spark_id_list.add(appId);
+						 spark_log_list.add(hp.getRunningTraceId());
+						 
+						 sparkLog.downloadSparkLog2Local_Indiv(appId, historyFolder);
+						
+						 sparkLog.analyzeLog(historyFolder+"/"+appId);
+						 System.out.println("----------Spark job's time cost="+sparkLog.getTimeAppCost()+"--------------");
+					}
+					
 				}
 				
 			}
 			
-			//summarize...
+			//summarize hadoop logs
+			if(appType.equals("Hadoop")) {
+				
 			System.out.println("Summarizing the results...");
 			
 			
 			tl.exportToCSV(groupId);
+			
+			}else {
+				//summarize spark logs
+				//export
+				
+				BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(
+						new FileOutputStream(new File(dirFolder+"/history" + "/timecost_" + groupId + ".csv"))));
+
+				 
+				String pl0=CatlaFileUtils.readFile(dirFolder+"/history/log-"+spark_log_list.get(0)+"/running_parameters.txt");
+				 String[] ps0=pl0.replace("\n", "").trim().split(" ");
+				 String header="";
+				 for(int j=0;j<ps0.length;j++) {
+					 String[] kv=ps0[j].split("=");
+					 if(kv.length<2)continue;
+					 if(j!=ps0.length-1)
+						 header+=kv[0]+"\t";
+					 else
+						 header+=kv[0];
+				 }
+				 
+				header = header.trim();
+				
+				String jobHeader = "TimeStamp\t"+ "Order" + "\t" + header + "\t" + "totalTimeCost";
+				bw.write(jobHeader.trim() + "\n");
+				
+				SparkLog sparkLog=new SparkLog(he);
+				for (int i=0;i<spark_id_list.size();i++) {
+					String appId=spark_id_list.get(i);
+					 String historyFolder=dirFolder+"/history/log-"+spark_log_list.get(i);
+					 sparkLog.downloadSparkLog2Local_Indiv(spark_id_list.get(i), historyFolder);
+						
+					 sparkLog.analyzeLog(historyFolder+"/"+appId);
+					 
+					 String pl=CatlaFileUtils.readFile(historyFolder+"/running_parameters.txt");
+					 String[] ps=pl.replace("\n", "").trim().split(" ");
+					 String vs="";
+					 for(int j=0;j<ps.length;j++) {
+						 String[] kv=ps[j].split("=");
+						 if(kv.length<2)continue;
+						 if(j!=ps.length-1)
+							 vs+=kv[1]+"\t";
+						 else
+							 vs+=kv[1];
+					 }
+					 
+					 bw.write(spark_log_list.get(i)+"\t"+(i+1)+"\t"+vs+"\t"+sparkLog.getTimeAppCost()+"\n");
+					 
+					 System.out.println("----------Spark job's time cost="+sparkLog.getTimeAppCost()+"--------------");
+					
+					 
+				}
+				
+				bw.close();
+				
+			}
 			
 			
 			

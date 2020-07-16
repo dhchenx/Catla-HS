@@ -161,6 +161,10 @@ public class HadoopTask {
 		{
 			he.setSparkUrl(map.get("SparkUrl"));
 		}
+		if(map.containsKey("AppType"))
+			he.setAppType(map.get("AppType"));
+		else 
+			he.setAppType("Hadoop");
 		return he;
 	}
 

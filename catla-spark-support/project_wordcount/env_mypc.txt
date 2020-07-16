@@ -1,0 +1,9 @@
+﻿Task init
+MasterHost 192.168.100.105
+MasterPassword 123456
+MasterPort 22
+MasterUser hadoop
+HadoopBin /home/bigdata/app/spark/bin/spark-submit
+AppRoot /usr/spark_apps
+SparkUrl spark://master:7077
+AppType Spark

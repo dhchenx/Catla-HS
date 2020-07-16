@@ -1,0 +1,11 @@
+Task submit
+Async true
+JarRemotePath /usr/spark_apps/SparkTest.jar
+MainClass org.apache.spark.examples.JavaWordCount
+Args hdfs://192.168.100.105:9000/cdh/tuning/wordcount/input @traceId=1594879466228 @masterIP=master @historyUrl=spark-job-history
+OtherArgs --executor-memory 512m --total-executor-cores 2
+FolderOfSuccessFlag /cdh/tuning/wordcount/output
+OutputHdfsFolders  /cdh/tuning/wordcount/output
+OutputLocalRootFolder C:\Users\douglaschan\Desktop\spark\project_wordcount/outputs
+Trace true
+LogPath C:\Users\douglaschan\Desktop\spark\project_wordcount/history/log-1594879466228

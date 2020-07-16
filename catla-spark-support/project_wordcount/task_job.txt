@@ -1,0 +1,12 @@
+﻿Task submit
+Async true
+JarRemotePath SparkTest.jar
+MainClass org.apache.spark.examples.JavaWordCount
+Args /cdh/tuning/wordcount/input
+FolderOfSuccessFlag /cdh/tuning/wordcount/output 
+OutputHdfsFolders  /cdh/tuning/wordcount/output
+OutputLocalRootFolder outputs
+OtherArgs --executor-memory 512m --total-executor-cores 2
+LogPath history
+Trace true
+JobType Spark

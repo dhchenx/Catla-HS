@@ -518,13 +518,14 @@ public class HadoopProject {
 			final String traceId=currentTraceId;
 			
 			if(ht.getTrace()!=null&& ht.getTrace().equals("true")) {
-				System.out.println(
-						"================Begin to detect if the Hadoop task log is finised when Trace=true ====================");
-				
+			
 				counter=0;
 				
 				//Hadoop
 				if(appType.equals("Hadoop")) {
+					
+					System.out.println(
+							"================Begin to detect if the Hadoop task log is finised when Trace=true ====================");
 					
 				
 				ht.setLogPath(this.getRootFolder()+"/history/log-"+currentTraceId);
@@ -613,92 +614,94 @@ public class HadoopProject {
 				    }
 				
 			}
-			}
-			
-			if(appType.equals("Spark")) {
 				
-				
-				System.out.println(
-						"================Begin to detect if the Spark task log is finised when Trace=true ====================");
-				
-				counter=0;
-			 
-				ht.setLogPath(this.getRootFolder()+"/history/log-"+currentTraceId);
-				
-				if(!new File(ht.getLogPath()).exists())
-					new File(ht.getLogPath()).mkdirs();
-				
-				ht.saveToFile("submit", ht.getLogPath()+"/task_submit.txt");
-				
-				SparkLog hlog=new SparkLog(he);
-				
-				
-				TuningLog tlog=new TuningLog(this.getRootFolder());
-				
-				
-				CountDownLatch  cdl = new CountDownLatch (1);
-				Timer timer = new Timer();
-				timer.schedule(new TimerTask() {
-					@Override
-					public void run() {
-						// TODO Auto-generated method stub
-						
-						boolean success_flag = ha.isSuccess(ht);
-						
-						counter++;
-						System.out.println("Detecting " + (counter) + " if the Spark log is finished: " + success_flag);
-						if (success_flag) {
-							//this.cancel();
-							System.out.println("Finished Log? => " + success_flag);
-						
-							if (ht.getLogPath() != null && !ht.getLogPath().isEmpty()) {
+				if(appType.equals("Spark")) {
+					
+					
+					System.out.println(
+							"================Begin to detect if the Spark task log is finised when Trace=true ====================");
+					
+					counter=0;
+				 
+					ht.setLogPath(this.getRootFolder()+"/history/log-"+currentTraceId);
+					
+					if(!new File(ht.getLogPath()).exists())
+						new File(ht.getLogPath()).mkdirs();
+					
+					ht.saveToFile("submit", ht.getLogPath()+"/task_submit.txt");
+					
+					SparkLog hlog=new SparkLog(he);
+					
+					CountDownLatch  cdl = new CountDownLatch (1);
+					Timer timer = new Timer();
+					timer.schedule(new TimerTask() {
+						@Override
+						public void run() {
+							// TODO Auto-generated method stub
+							
+							boolean success_flag = ha.isSuccess(ht);
+							
+							counter++;
+							System.out.println("Detecting " + (counter) + " if the Spark log is finished: " + success_flag);
+							if (success_flag) {
+								//this.cancel();
+								System.out.println("Finished Log? => " + success_flag);
+							
+								if (ht.getLogPath() != null && !ht.getLogPath().isEmpty()) {
 
-								String appId=((SparkApp)ha).getAppId();
-								String logFolder=rootFolder+"/history/log-"+traceId;
-								if(!new File(logFolder).exists()) {
-									new File(logFolder).mkdirs();
+									String appId=((SparkApp)ha).getAppId();
+									String logFolder=rootFolder+"/history/log-"+traceId;
+									if(!new File(logFolder).exists()) {
+										new File(logFolder).mkdirs();
+									}
+									
+									hlog.downloadSparkLog2Local(appId, logFolder);
+									
+									System.out.println("Download Spark Log... Async: " + ht.getLogPath());
+									
+									writeFile(logFolder+"/iteration_"+(currentI+1),"");
+									writeFile(logFolder+"/spark.app.id",appId);
+									
+								//	if(waitForAllJobCompletion)
+								//	cdl.countDown();
+									
+									
 								}
-								
-								hlog.downloadSparkLog2Local(appId, logFolder);
-								
-								System.out.println("Download Spark Log... Async: " + ht.getLogPath());
-								
-								writeFile(logFolder+"/iteration_"+(currentI+1),"");
-								
-							//	if(waitForAllJobCompletion)
-							//	cdl.countDown();
-								
-								
+
 							}
+							
+						
+							
+								this.cancel();
 
+								if(waitForAllJobCompletion)
+									cdl.countDown();
+							
+						
 						}
-						
-					
-						
-							this.cancel();
 
-							if(waitForAllJobCompletion)
-								cdl.countDown();
-						
-					
-					}
-
-				}, 5 * 1000, 2 * 1000);// delay, period
-			
+					}, 5 * 1000, 2 * 1000);// delay, period
 				
-				 try {
-					 if(waitForAllJobCompletion)
-				        cdl.await();
+					
+					 try {
+						 if(waitForAllJobCompletion)
+					        cdl.await();
 
-				    } catch (InterruptedException ex) {
-				    	ex.printStackTrace();
-				    	
-				    }
+					    } catch (InterruptedException ex) {
+					    	ex.printStackTrace();
+					    	
+					    }
+					
 				
-			
+					
+					
+				}
+				
 				
 				
 			}
+			
+			
 			
 			
 			
