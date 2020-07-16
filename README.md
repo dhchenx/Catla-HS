@@ -33,7 +33,7 @@
 ## Simple steps
 <center>
 <img src="images/steps.jpg" alt="CatlaHS usage"
-	title="CatlaHS usage" width="60%"  />
+	title="CatlaHS usage" width="50%"  />
 </center>
 
 <center>Fig.1 Usag of CatlaHS</center>
