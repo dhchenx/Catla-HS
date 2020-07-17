@@ -114,6 +114,7 @@ public class EmbeddedJavaExample {
 </center>
 <center>Fig. 3 Three-dimensional surface plot of running time of a MapReduce job over two Hadoop configuration parameters using the exhaustive search method on Hadoop</center>
 <center><br/>
+
 <img src="images/catla-spark-analysis.jpg" alt="exhaustive search for Spark"
 	title="Plots of tuning MapReduce job performance on Spark" width="50%"  /><br/>
 </center>
@@ -121,12 +122,10 @@ public class EmbeddedJavaExample {
 
 ### (2) Derivative-free optimization-based search
 <center>
-
 <img src="images/catla-tuning-bobyqa.jpg" alt="BOBYQA optimizer"
 	title="Change of running time of a MapReduce job over number of iterations" width="50%"  />
 </center>
-
-<center>Fig. 4 Change of running time of a MapReduce job over number of iterations when tuning using a BOBYQA optimizer</center>
+<center>Fig. 5 Change of running time of a MapReduce job over number of iterations when tuning using a BOBYQA optimizer</center>
 
 [Other DFO-based algorithms](https://github.com/dhchenx/Catla-HS/blob/master/docs/catla-usage.md) supported include:
 1. Powell's method
