@@ -114,7 +114,7 @@ public class EmbeddedJavaExample {
 </center>
 <center>Fig. 3 Three-dimensional surface plot of running time of a MapReduce job over two Hadoop configuration parameters using the exhaustive search method on Hadoop</center>
 <center><br/>
-<img src="images/catla-spark-result.jpg" alt="exhaustive search for Spark"
+<img src="images/catla-spark-analysis.jpg" alt="exhaustive search for Spark"
 	title="Plots of tuning MapReduce job performance on Spark" width="50%"  /><br/>
 </center>
 <center>Fig. 4 Two-dimensional plot of running time of a MapReduce job over one Hadoop configuration parameters using the exhaustive search method on Spark</center>
