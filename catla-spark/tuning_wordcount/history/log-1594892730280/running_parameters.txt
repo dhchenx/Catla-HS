@@ -1,1 +1,0 @@
---total-executor-cores=1 --executor-memory=700m 

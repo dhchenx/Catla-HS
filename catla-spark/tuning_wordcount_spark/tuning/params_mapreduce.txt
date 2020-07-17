@@ -1,0 +1,8 @@
+executor-memory={512m,1g}:string:512m
+total-executor-cores=[4,16],4:int:10
+num-executors=[50,150],50:int:100
+executor-cores=[2,4],1:int:3
+driver-memory={512m,1g}:string:512m
+conf spark.default.parallelism=[500,1000],200:int
+conf spark.storage.memoryFraction=[0.4,0.8],0.2:float:0.6
+conf spark.shuffle.memoryFraction=[0.2,0.6],0.2:float:0.6

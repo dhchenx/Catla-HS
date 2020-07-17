@@ -1,2 +1,0 @@
-executor-memory={512m,700m}:string
-total-executor-cores=[1,2],1:int

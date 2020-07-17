@@ -1,0 +1,1 @@
+--num-executors=100 --conf spark.storage.memoryFraction=.80 --total-executor-cores=4 
