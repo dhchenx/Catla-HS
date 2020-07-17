@@ -9,11 +9,12 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import cn.edu.bjtu.cdh.catla.optimization.HadoopOptimizer;
+import cn.edu.bjtu.cdh.catla.stat.HadoopLogStat;
+import cn.edu.bjtu.cdh.catla.stat.SparkLogStat;
 import cn.edu.bjtu.cdh.catla.task.HadoopLog;
 import cn.edu.bjtu.cdh.catla.task.HadoopProject;
 import cn.edu.bjtu.cdh.catla.task.HadoopTask;
 import cn.edu.bjtu.cdh.catla.tuning.HadoopTuning;
-import cn.edu.bjtu.cdh.catla.tuning.TuningLog;
 
 public class CatlaRunner {
 	
@@ -68,9 +69,13 @@ public class CatlaRunner {
 			if (options.get("-tool").equals("optimizer")) {
 				HadoopOptimizer.main(args);
 			}else if(options.get("-tool").equals("log")) {
-				TuningLog.main(args);
+				HadoopLogStat.main(args);
 			}else if(options.get("-tool").equals("refreshlog")) {
 				HadoopLog.main(args);
+			}else if(options.get("-tool").equals("spark_log_stat")) {
+				SparkLogStat.main(args);
+			}else if(options.get("-tool").equals("hadoop_log_stat")) {
+				HadoopLogStat.main(args);
 			}else {
 				System.out.println("Error: no valid -tool value is pointed!");
 			}

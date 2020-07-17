@@ -27,7 +27,7 @@ public class SparkTaskExample {
 		CatlaRunner.main(args);	
 	}
 	
-	public static void main(String[] args) {
+	public static void main3(String[] args) {
 
 		//tuning using Exhaustive Search
 		try {
@@ -38,7 +38,33 @@ public class SparkTaskExample {
 					"-clean", "true", 
 					"-group", "wordcount", 
 					"-upload","false",
-					"-uploadjar","true",
+					"-uploadjar","false",
+				};
+			
+			CatlaRunner.main(args);
+			
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}
+
+	}
+	
+	public static void main(String[]args) {
+
+		//tuning using the BOBYQA DFO-based optimizer
+		try {
+			
+		 args = new String[] { 
+					"-tool","optimizer",
+					"-dir", "C:\\Users\\douglaschan\\Desktop\\spark\\tuning_wordcount_spark",
+					"-clean", "true", 
+					"-group", "wordcount", 
+					"-upload","false",
+					"-uploadjar","false",
+					"-maxinter","100",
+					"-optimizer","BOBYQA",
+					"-BOBYQA-initTRR","20",
+					"-BOBYQA-stopTRR","1.0e-4"
 				};
 			
 			CatlaRunner.main(args);

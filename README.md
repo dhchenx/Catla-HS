@@ -1,5 +1,5 @@
-<img src="images/catla-logo.png" alt="Catla"
-	title="Catla's logo" width="200" height="90" /><br/>
+<img src="images/catla-hs-logo.png" alt="Catla for Hadoop and Spark"
+	title="Catla-HS's logo" width="200" height="90" /><br/>
 # Catla-HS
 <b>Catla for Hadoop and Spark</b> (Catla-HS) is a self-tuning system for Hadoop parameters to improve performance of MapReduce jobs on both Hadoop and Spark clusters. Catla-HS is an improved version of [Catla](https://arxiv.org/abs/1912.12456), which is our previous work that only focused on Hadoop cluster. <br> <br>This redesigned project is template-driven, making it very flexible to perform complicated job execution, monitoring and self-tuning for MapReduce performance that addressed more modern solutions like Spark. Besides, the project provides tools that are easy to use for designing jobs, analyzing and visualizing tuning results. 
 
@@ -33,7 +33,7 @@
 ## Simple steps
 <center>
 <img src="images/steps.jpg" alt="CatlaHS usage"
-	title="CatlaHS usage" width="60%"  />
+	title="CatlaHS usage" width="50%"  />
 </center>
 
 <center>Fig.1 Usag of CatlaHS</center>

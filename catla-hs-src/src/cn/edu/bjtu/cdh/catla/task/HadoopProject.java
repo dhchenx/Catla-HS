@@ -24,7 +24,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
-import cn.edu.bjtu.cdh.catla.tuning.TuningLog;
+import cn.edu.bjtu.cdh.catla.stat.HadoopLogStat;
 import cn.edu.bjtu.cdh.catla.utils.CatlaFileUtils;
 import cn.edu.bjtu.cdh.catla.utils.UnicodeReader;
 
@@ -538,7 +538,7 @@ public class HadoopProject {
 				HadoopLog hlog=new HadoopLog(he);
 				
 				
-				TuningLog tlog=new TuningLog(this.getRootFolder());
+				HadoopLogStat tlog=new HadoopLogStat(this.getRootFolder());
 				
 				
 				CountDownLatch  cdl = new CountDownLatch (1);

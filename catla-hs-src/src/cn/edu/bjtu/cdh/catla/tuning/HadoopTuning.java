@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 
+import cn.edu.bjtu.cdh.catla.stat.HadoopLogStat;
 import cn.edu.bjtu.cdh.catla.task.HadoopEnv;
 import cn.edu.bjtu.cdh.catla.task.HadoopProject;
 import cn.edu.bjtu.cdh.catla.task.HadoopTask;
@@ -526,7 +527,7 @@ public Map<String,String> obtainSparkJobArgs(String line){
 		
 		otherArgs=otherArgs.trim();
 		
-		map.put("OtherArgs", otherArgs);
+		map.put("OtherArgs", line);
 		
 		return map;
 		
@@ -721,7 +722,7 @@ public Map<String,String> obtainSparkJobArgs(String line){
 		
 		if(htuning.getOtherArgLists()!=null&&htuning.getOtherArgLists().size()>0) {
 			
-			TuningLog tl=new TuningLog(dirFolder,htuning.getAliasMap());
+			HadoopLogStat tl=new HadoopLogStat(dirFolder,htuning.getAliasMap());
 			
 			if(htuning.getAliasMap()!=null) {
 				System.out.println("Alias Map for input parameter value: ");
@@ -807,7 +808,8 @@ public Map<String,String> obtainSparkJobArgs(String line){
 					
 					writeFile(historyRunningParameterPath,otherArgs);
 					
-					String historyIterationPath=historyFolder+"/iteration_"+(i+1)+"";
+					String historyIterationPath=historyFolder+"/no_"+(i+1)+"";
+					
 					writeFile(historyIterationPath,"");
 					
 					
@@ -871,9 +873,9 @@ public Map<String,String> obtainSparkJobArgs(String line){
 					 String[] kv=ps0[j].split("=");
 					 if(kv.length<2)continue;
 					 if(j!=ps0.length-1)
-						 header+=kv[0]+"\t";
+						 header+=kv[0].replace("--", "")+"\t";
 					 else
-						 header+=kv[0];
+						 header+=kv[0].replace("--", "");
 				 }
 				 
 				header = header.trim();
@@ -911,8 +913,6 @@ public Map<String,String> obtainSparkJobArgs(String line){
 				bw.close();
 				
 			}
-			
-			
 			
 		}
 		

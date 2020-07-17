@@ -21,7 +21,7 @@ import org.apache.hadoop.fs.PathFilter;
 import org.apache.hadoop.io.IOUtils;
 import org.apache.hadoop.util.ToolRunner;
 
-import cn.edu.bjtu.cdh.catla.tuning.TuningLog;
+import cn.edu.bjtu.cdh.catla.stat.HadoopLogStat;
 import cn.edu.bjtu.cdh.catla.utils.UnicodeReader;
 
 public class HadoopLog {
@@ -482,7 +482,7 @@ public class HadoopLog {
 		
 		HadoopLog hl=new HadoopLog(this.env);
 		
-		TuningLog tlog=new TuningLog(rootPath);
+		HadoopLogStat tlog=new HadoopLogStat(rootPath);
 		
 		String single_log_path=logPath+"\\log-"+ traceId;
 		
@@ -494,7 +494,7 @@ public class HadoopLog {
 		System.out.println("traceId="+traceId+", timeCost="+timeCost);
 	
 		
-		TuningLog tl = new TuningLog(projectFolder, null);
+		HadoopLogStat tl = new HadoopLogStat(projectFolder, null);
 		tl.exportToCSV(new File(projectFolder).getName());
 		
 	}
@@ -516,7 +516,7 @@ public class HadoopLog {
 			}
 		}
 		
-		TuningLog tlog=new TuningLog(rootPath);
+		HadoopLogStat tlog=new HadoopLogStat(rootPath);
 		
 		
 		for(int i=0;i<traceIds.size();i++) {
@@ -532,7 +532,7 @@ public class HadoopLog {
 		
 		}
 	
-		TuningLog tl = new TuningLog(projectFolder, null);
+		HadoopLogStat tl = new HadoopLogStat(projectFolder, null);
 		tl.exportToCSV(new File(projectFolder).getName());
 		
 	}

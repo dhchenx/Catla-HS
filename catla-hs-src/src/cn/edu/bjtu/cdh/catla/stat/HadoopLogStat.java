@@ -1,4 +1,4 @@
-package cn.edu.bjtu.cdh.catla.tuning;
+package cn.edu.bjtu.cdh.catla.stat;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -19,15 +19,15 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class TuningLog {
+public class HadoopLogStat {
 	private String projectFolder;
 	private Map<String, String> aliasMap;
 
-	public TuningLog(String folder) {
+	public HadoopLogStat(String folder) {
 		this.setProjectFolder(folder);
 	}
 
-	public TuningLog(String folder, Map<String, String> aliasMap) {
+	public HadoopLogStat(String folder, Map<String, String> aliasMap) {
 		this.setProjectFolder(folder);
 		this.aliasMap = aliasMap;
 	}
@@ -1088,7 +1088,7 @@ public class TuningLog {
 		}
 		
 		Map<String, String> options = getOptionMap(args);
-		TuningLog tl = new TuningLog(options.get("-dir"), null);
+		HadoopLogStat tl = new HadoopLogStat(options.get("-dir"), null);
 		tl.exportToCSV(new File(options.get("-dir")).getName());
 		
 	}

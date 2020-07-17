@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -226,7 +227,7 @@ public class SparkLog {
 		
 		for (int i = 0; i < lines.size(); i++) {
 			String line = lines.get(i);
-			System.out.println(line);
+			//System.out.println(line);
 			JsonObject jsonObject = new JsonParser().parse(line).getAsJsonObject();
 			String event = jsonObject.get("Event").getAsString();
 			//System.out.println("event: " + event);
@@ -367,6 +368,63 @@ public class SparkLog {
 
 	public void setTimeJobCost(long timeJobCost) {
 		this.timeJobCost = timeJobCost;
+	}
+	
+	public void exportSparkResult(String dirFolder,String groupId,List<String> spark_log_list,List<String> spark_id_list) {
+		
+		 try {
+		
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(
+				new FileOutputStream(new File(dirFolder+"/history" + "/timecost_" + groupId + ".csv"))));
+
+		String pl0=CatlaFileUtils.readFile(dirFolder+"/history/log-"+spark_log_list.get(0)+"/running_parameters.txt");
+		 String[] ps0=pl0.replace("\n", "").trim().split(" ");
+		 String header="";
+		 for(int j=0;j<ps0.length;j++) {
+			 String[] kv=ps0[j].split("=");
+			 if(kv.length<2)continue;
+			 if(j!=ps0.length-1)
+				 header+=kv[0].replace("--", "")+"\t";
+			 else
+				 header+=kv[0].replace("--", "");
+		 }
+		 
+		header = header.trim();
+		
+		String jobHeader = "TimeStamp\t"+ "Order" + "\t" + header + "\t" + "totalTimeCost";
+		bw.write(jobHeader.trim() + "\n");
+		
+		SparkLog sparkLog=new SparkLog(this.env);
+		for (int i=0;i<spark_id_list.size();i++) {
+			String appId=spark_id_list.get(i);
+			 String historyFolder=dirFolder+"/history/log-"+spark_log_list.get(i);
+			 sparkLog.downloadSparkLog2Local_Indiv(spark_id_list.get(i), historyFolder);
+				
+			 sparkLog.analyzeLog(historyFolder+"/"+appId);
+			 
+			 String pl=CatlaFileUtils.readFile(historyFolder+"/running_parameters.txt");
+			 String[] ps=pl.replace("\n", "").trim().split(" ");
+			 String vs="";
+			 for(int j=0;j<ps.length;j++) {
+				 String[] kv=ps[j].split("=");
+				 if(kv.length<2)continue;
+				 if(j!=ps.length-1)
+					 vs+=kv[1]+"\t";
+				 else
+					 vs+=kv[1];
+			 }
+			 
+			 bw.write(spark_log_list.get(i)+"\t"+(i+1)+"\t"+vs+"\t"+sparkLog.getTimeAppCost()+"\n");
+			 
+			 System.out.println("----------Spark job's time cost="+sparkLog.getTimeAppCost()+"--------------");
+			
+			 
+		}
+		
+		bw.close();
+		 }catch(Exception ex) {
+			 ex.printStackTrace();
+		 }
 	}
 
 }
