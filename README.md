@@ -34,7 +34,7 @@
 ### (1) Shell
 with Cata-HS.jar in Terminal
 ```
-java -jar Catla.jar -tool project -dir /your-example-folder/project_wordcount -task pipeline -download true -sequence true
+java -jar Catla-HS.jar -tool project -dir /your-example-folder/project_wordcount -task pipeline -download true -sequence true
 ```
 Advanced usage please see [here](https://github.com/dhchenx/Catla-HS/blob/master/docs/catla-usage.md)
 ### (2) Embedded Java
