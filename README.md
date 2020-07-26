@@ -90,11 +90,11 @@ public class EmbeddedJavaExample {
 			public void run() {
 				// TODO Auto-generated method stub
 				boolean success_flag = ha.isSuccess(ht);
-				System.out.println("checking if success: "+success_flag);
+				
 				if(success_flag) {
-					System.out.println("已执行完毕: "+success_flag);
+					
 					//6. download the analysis results
-					System.out.println("下载结果到: "+ht.getOutputLocalRootFolder());
+					
 					ha.downloadResultToLocal(ht);
 					
 					this.cancel();
