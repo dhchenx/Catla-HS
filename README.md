@@ -135,6 +135,23 @@ public class EmbeddedJavaExample {
 ## Credits
 This project is established upon the project <a href='https://github.com/apache/hadoop'>Apache Hadoop</a>, <a href='http://commons.apache.org/proper/commons-math/'>Apache Commons Math3</a> and <a href='https://github.com/apache/mina-sshd'>Apache MINA SSHD</a> under <a href='https://www.apache.org/licenses/LICENSE-2.0'>APACHE LICENSE, VERSION 2.0</a>. 
 
+## Citation
+<p>
+Donghua Chen, "An Open-Source Project for MapReduce Performance Self-Tuning," arXiv:1912.12456 [cs.DC], Dec. 2019. 
+</p>
+
+OR
+```
+@misc{chen2019opensource,
+    title={An Open-Source Project for MapReduce Performance Self-Tuning},
+    author={Donghua Chen},
+    year={2019},
+    eprint={1912.12456},
+    archivePrefix={arXiv},
+    primaryClass={cs.DC}
+}
+```
+
 ## LICENSE
 See the <a href='https://github.com/dhchenx/Catla/blob/master/LICENSE'>LICENSE</a> file for license rights and limitations (GNU GPLv3).
 
