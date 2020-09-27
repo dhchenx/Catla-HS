@@ -10,8 +10,8 @@ public class CatlaExamples {
 	//  testSubmitTask();
 	//	testOptmizer();
 	//	testSubmitProject();
-	//	testTuningUsingExhaustiveSearch();
-		testExportHadoopLog();
+		testTuningUsingExhaustiveSearch();
+	//	testExportHadoopLog();
 	}
 	
 	public static void testTuningUsingExhaustiveSearch() {
@@ -21,15 +21,16 @@ public class CatlaExamples {
 			
 		String[] args = new String[] { 
 					"-tool","tuning",
-					"-dir", "C:\\Users\\douglaschan\\Desktop\\Hadoop任务管理工具\\Catla\\tuning_wordcount",
+					"-dir", "E:\\CatlaHS\\tuning_similarity",
 					"-clean", "true", 
 					"-group", "wordcount", 
-					"-upload","false",
-					"-uploadjar","true",
+					"-upload","false", 
+					"-uploadjar","true"
+					
 				};
 			
 			CatlaRunner.main(args);
-			
+			 
 		}catch(Exception ex) {
 			ex.printStackTrace();
 		}

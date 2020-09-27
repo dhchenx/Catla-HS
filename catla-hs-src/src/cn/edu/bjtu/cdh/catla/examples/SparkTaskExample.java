@@ -27,7 +27,7 @@ public class SparkTaskExample {
 		CatlaRunner.main(args);	
 	}
 	
-	public static void main3(String[] args) {
+	public static void main(String[] args) {
 
 		//tuning using Exhaustive Search
 		try {
@@ -49,7 +49,7 @@ public class SparkTaskExample {
 
 	}
 	
-	public static void main(String[]args) {
+	public static void main11(String[]args) {
 
 		//tuning using the BOBYQA DFO-based optimizer
 		try {
