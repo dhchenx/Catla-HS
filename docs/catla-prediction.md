@@ -1,6 +1,6 @@
 # Predictor Runner
 
-In Catla-HS, there is an additional component called *PredictorRunner* to facilitate performance change's fitting and predition. With the use of multiple fitting analysis, we can establish the prediction model for evaluating MapReduce job  performance. 
+In Catla-HS, there is an additional component called `PredictorRunner` to facilitate performance change's fitting and predition. With the use of multiple fitting analysis, we can establish the prediction model for evaluating MapReduce job  performance. 
 
 ## Model support
 
@@ -215,6 +215,12 @@ Comparison between real values and predicted values:
 
 
 Other models can be similiarly estimated using `PredictorRunner` in Catla-HS. 
+
+## Implementation 
+
+You can find full code implementation [here](https://github.com/dhchenx/Catla-HS/tree/master/catla-hs-src/src/cn/edu/bjtu/cdh/catla).
+
+
 
 
 

@@ -1,5 +1,6 @@
-# Document of templates in Catla
+# Document of templates in Catla-HS
 This document illustrates details of templates and rules to construct a tuning task or project for MapReduce jobs on Hadoop. Properly designing the configuration files of the running project can improve efficiency of tuning on Hadoop. 
+
 ## Task-based template
 
 The task-based template is the core of this self-tuning system since it abstracts important job operations from one simple job execution on Hadoop. Job operations includes uploading Java libraries of job, uploading necessary datasets to analyze in a job, starting job execution and setting Hadoop environments. HJM implementation is illustrated as the HadoopTaskRunner class in Figure 1 where HJM depends on HadoopEnv, HadoopJar and HadoopTask classes. The attributes and methods in these classes illustrate actual implementation in the system. 
