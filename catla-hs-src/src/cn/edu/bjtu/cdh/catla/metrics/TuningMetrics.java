@@ -202,10 +202,22 @@ public class TuningMetrics {
 
 			System.out.println();
 			*/
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
+	}
+	
+	public static void compareMetrics(String[] project_paths) {
+		
+		
+		for(int i=0;i<project_paths.length;i++) {
+			TuningMetrics tm=new TuningMetrics(project_paths[i]);
+			tm.extract("wordcount");
+			System.out.println(tm.getProjectName()+"\t"+tm.getMinTuningTime()+"\t"+tm.getMinJobTime());
+		}
+		
 	}
 	
 	

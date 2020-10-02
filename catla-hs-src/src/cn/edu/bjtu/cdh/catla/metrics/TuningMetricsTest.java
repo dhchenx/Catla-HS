@@ -24,7 +24,7 @@ public class TuningMetricsTest {
 			FileReader fr = new FileReader(metric_file);
 			BufferedReader bf = new BufferedReader(fr);
 			String str;
-			// °´ÐÐ¶ÁÈ¡×Ö·û´®
+			
 			while ((str = bf.readLine()) != null) {
 				arrayList.add(str);
 				//System.out.println(str);

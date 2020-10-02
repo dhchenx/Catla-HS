@@ -20,7 +20,9 @@ public class TuningOneMetricTest {
 		
 		List<Long> timestamp_list=new ArrayList<Long>();
 		List<Long> jobtime_list=new ArrayList<Long>();
+		
 		try {
+			
 			FileReader fr = new FileReader(metric_file);
 			BufferedReader bf = new BufferedReader(fr);
 			String str;
