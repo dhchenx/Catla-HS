@@ -15,8 +15,8 @@
 1. <b>Task Runner:</b> To submit a single MapReduce job to a Hadoop and Spark cluster and obtain its analyzing results and logs after the job is completed. 
 2. <b>Project Runner:</b> To submit a group of MapReduce jobs in an organized project folder and monitor the status of its running until completion; eventually, all analyzing results and their logs that contain information of running time in all MapReduce phrases are downloaded into specified location path in its project folder. 
 3. <b>Optimizer Runner:</b> To create a series of MapReduce jobs with different combinations of parameter values according to parameter configuration files and obtain the optimal parameter values with least time cost after the tuning process is finished. Two tuning processes, namely direct search and derivative-free optimization (DFO) techniques, are supported.
-4. <b>Predictor Runner:</b> To provide multiple prediction models that helps fit the tuning results and predict future performance change of MapReduce jobs. 
-6. <b> Performance visualization tool</b>: A tool that helps users analyze, visualize and decision making according to collected data of tuning jobs. 
+4. <b>Predictor Runner:</b> To provide multiple prediction models that helps fit the tuning results and predict future performance change of MapReduce jobs. [New](https://github.com/dhchenx/Catla-HS/blob/master/docs/catla-prediction.md)
+6. <b> Performance visualization tool</b>: A tool that helps users analyze, visualize and decision making according to collected data of tuning jobs. [New](https://github.com/dhchenx/Catla-HS/blob/master/docs/catla-visualization.md)
 7. <b>CatlaUI</b>: CatlaUI provides user-friendly GUI to perform important functions of Catla-HS. <a href='https://github.com/dhchenx/Catla/tree/master/catla-ui'>here</a>
 
 ## Flowchart of tuning
@@ -25,7 +25,7 @@
 	title="Catla-HS usage" width="50%"  />
 </center>
 
-<center>Fig.2 Usag of Catla-HS that support both Hadoopa and Spark</center>
+<center>Fig.2 Usag of Catla-HS that support both Hadoop and Spark</center>
 
  [Advanced example?](https://github.com/dhchenx/Catla-HS/blob/master/docs/catla-usage.md)
 
