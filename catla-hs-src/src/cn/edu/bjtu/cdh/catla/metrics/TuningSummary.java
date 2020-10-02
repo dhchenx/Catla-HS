@@ -68,10 +68,7 @@ public class TuningSummary {
 			
 		}
 		return data;
-		
-		
-	
-		
+
 	}
 	
 

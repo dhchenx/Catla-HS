@@ -68,11 +68,11 @@ public class PredictorExamples {
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		// testPoly();
+		 testPoly();
 		// testLine();
 		// testLine2();
 		// testExp();
-		testLog();
+		// testLog();
 	}
 
 }
