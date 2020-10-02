@@ -1,7 +1,7 @@
 <img src="images/catla-hs-logo.png" alt="Catla for Hadoop and Spark"
 	title="Catla-HS's logo" width="200" height="90" /><br/>
 # Catla-HS
-<b>Catla for Hadoop and Spark</b> (Catla-HS) is a self-tuning system for Hadoop parameters to improve performance of MapReduce jobs on both Hadoop and Spark clusters. Catla-HS is an improved version of [Catla](https://arxiv.org/abs/1912.12456), which is our previous work that only focused on Hadoop cluster. <br> <br>This redesigned project is template-driven, making it very flexible to perform complicated job execution, monitoring and self-tuning for MapReduce performance that addressed more modern solutions like Spark. Besides, the project provides tools that are easy to use for designing jobs, analyzing and visualizing tuning results. 
+<b>Catla for Hadoop and Spark</b> (Catla-HS) is a self-tuning system for Hadoop parameters to improve the performance of MapReduce jobs on both Hadoop and Spark clusters. Catla-HS is an improved version of [Catla](https://arxiv.org/abs/1912.12456), which is our previous work that only focused on Hadoop cluster. <br> <br>This redesigned project is template-driven, making it very flexible to perform complicated job execution, monitoring and self-tuning for MapReduce performance that addressed more modern solutions like Spark. Besides, the project provides prediction and visualization tools that are easy to use for designing jobs, analyzing, visualizing and predicting the performanc of MapReduce jobs. 
 
 ## Architecture
 <center>
@@ -15,10 +15,9 @@
 1. <b>Task Runner:</b> To submit a single MapReduce job to a Hadoop and Spark cluster and obtain its analyzing results and logs after the job is completed. 
 2. <b>Project Runner:</b> To submit a group of MapReduce jobs in an organized project folder and monitor the status of its running until completion; eventually, all analyzing results and their logs that contain information of running time in all MapReduce phrases are downloaded into specified location path in its project folder. 
 3. <b>Optimizer Runner:</b> To create a series of MapReduce jobs with different combinations of parameter values according to parameter configuration files and obtain the optimal parameter values with least time cost after the tuning process is finished. Two tuning processes, namely direct search and derivative-free optimization (DFO) techniques, are supported.
-4. <b>CatlaUI</b>: CatlaUI provides user-friendly GUI to perform important functions of Catla-HS. <a href='https://github.com/dhchenx/Catla/tree/master/catla-ui'>here</a>
-5. <b>Task design tool</b>: A tool that facilitate design of tuning logic according to user needs. You don't need to configure in plain text file. 
-6. <b>Tuning configuration tool</b>: A tool that faciliate settings of tuning based on expert knowledge. 
-7. <b> Performance analysis tool</b>: A tool that helps users analyze, visualize and decision making according to collected data of tuning jobs. 
+4. <b>Predictor Runner:</b> To provide multiple prediction models that helps fit the tuning results and predict future performance change of MapReduce jobs. 
+6. <b> Performance visualization tool</b>: A tool that helps users analyze, visualize and decision making according to collected data of tuning jobs. 
+7. <b>CatlaUI</b>: CatlaUI provides user-friendly GUI to perform important functions of Catla-HS. <a href='https://github.com/dhchenx/Catla/tree/master/catla-ui'>here</a>
 
 ## Flowchart of tuning
 <center>
