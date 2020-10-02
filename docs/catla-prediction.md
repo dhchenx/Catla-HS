@@ -191,6 +191,18 @@ Here are some usage examples to perform prediction analysis in Catla-HS.
 
 The `-dir` parameter should be assigned with the path of history folder or project folder. 
 
+The `-predictor`parameter represents model used to fit, current value set includes poly, line, lineXs, exp, log, and other models defined by users in the future. 
+
+The `-x` parameter represents the fields used for x-axis. 
+
+The `-y` parameter represents the fields used for y-axis, you can use multiple fields split by `,`.
+
+The `-plot_title` parameter repesents caption of graph. 
+
+The `-plot_type` parameter represents style of graph. 
+
+The `-n` parameter represents other parameters use for specific models.
+
 Here are the results:
 
 Fitting model:
