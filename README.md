@@ -5,7 +5,7 @@
 
 ## Architecture
 <center>
-<img src="images/catla-architecture-new.jpg" alt="CatlaHS architecture"
+<img src="images/catla-hs-architecture.jpg" alt="CatlaHS architecture"
 	title="Architecture of Catla" width="80%"  />
 </center>
 
@@ -30,81 +30,81 @@
 
  [Advanced example?](https://github.com/dhchenx/Catla-HS/blob/master/docs/catla-usage.md)
 
-## Run modes
+## Usage
+
+Below lists some typical uses of Catla-HS. 
+
 ### (1) Shell
+
 with Cata-HS.jar in Terminal
+
 ```
 java -jar Catla-HS.jar -tool project -dir /your-example-folder/project_wordcount -task pipeline -download true -sequence true
 ```
-Advanced usage please see [here](https://github.com/dhchenx/Catla-HS/blob/master/docs/catla-usage.md)
-### (2) Embedded Java
-An advanced example to demonstrate the full usage of the hadoop task in Java codes, which can be integrated in your application. 
+
+### (2) Execute using CatlaRunner
+
+Example 1: Submit a MapReduce job
+
 ```java
-package cn.edu.bjtu.bigdata.cdh.examples.hpt;
-
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.logging.LogManager;
-import cn.edu.bjtu.bigdata.cdh.hadooptask.HadoopApp;
-import cn.edu.bjtu.bigdata.cdh.hadooptask.HadoopEnv;
-import cn.edu.bjtu.bigdata.cdh.hadooptask.HadoopTask;
-
-public class EmbeddedJavaExample {
-	public static void main(String[] args) {
-		LogManager.getLogManager().reset();
-		//1. setup environment
-		HadoopEnv he = new HadoopEnv();
-		he.setMasterHost("192.168.159.132");//master IP
-		he.setMasterPassword("Passw0rd"); //master user password
-		he.setMasterPort(22); // master port
-		he.setMasterUser("hadoop"); // master user name
-		he.setHadoopBin("/usr/hadoop/bin/hadoop");
-		he.setAppRoot("/usr/hadoop_apps");// all submitted jars will be uploaded to this folder
-
-		//2. Setup MapReduce jobs
-		HadoopTask ht = new HadoopTask();
-		ht.setAsync(true);
-		ht.setJarRemotePath("HPExamples.jar");
-		ht.setMainClass("cn.edu.bjtu.cdh.examples.wordcount.WordCount");
-		ht.setArgs(new String[] { 
-				"/data/cdh/examples/wordcount/input",
-				"/data/cdh/examples/wordcount/output"
-				});
-		ht.setFolderOfSuccessFlag("/data/cdh/examples/wordcount/output"); 
-		ht.setOutputHdfsFolders(new String[] {
-				"/data/cdh/examples/wordcount/output"
-		}); 		
-		ht.setOutputLocalRootFolder("downloads/wordcount"); 
+	String[] args=new String[] {
+				"-tool","task",
+				"-dir","C:\\Users\\douglaschan\\Desktop\\Hadoop任务管理工具\\Catla\\task_wordcount"
+		};
 		
-		//3. init Hadoop cluster
-		HadoopApp ha = new HadoopApp(he);
-		
-		//4. submit task
-		String output_str = ha.submitTask(ht);
-		System.out.println(output_str);
-		
-		//5. detect if the job is finished
-		Timer timer = new Timer();
-		 timer.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				boolean success_flag = ha.isSuccess(ht);
-				
-				if(success_flag) {
-					
-					//6. download the analysis results
-					
-					ha.downloadResultToLocal(ht);
-					
-					this.cancel();
-				}
-			}
-		 }, 10*1000, 5*1000);
-	}
-}
-
+		CatlaRunner.main(args);
 ```
+
+Example 2: Submit a composite MapReduce tasks with mutiple jobs
+
+```java
+		String[] args=new String[] {
+				"-tool","project",
+				"-dir","C:\\Users\\douglaschan\\Desktop\\Hadoop任务管理工具\\Catla\\project_wordcount",
+				"-task","pipeline",
+				"-download","true",
+				"-sequence","true"
+		};
+		
+		CatlaRunner.main(args);
+```
+
+Example 3: Tuning using Exhaustive Search
+
+```java
+		String[] args = new String[] { 
+					"-tool","tuning",
+					"-dir", "E:\\CatlaHS\\tuning_similarity",
+					"-clean", "true", 
+					"-group", "wordcount", 
+					"-upload","false", 
+					"-uploadjar","true"
+					
+				};
+			
+			CatlaRunner.main(args);
+```
+
+Example 4: Tuning using BOBYQA (a method of derivative-free optimization)
+
+```java
+String[]	args = new String[] { 
+					"-tool","optimizer",
+					"-dir", "C:\\Users\\douglaschan\\Desktop\\Hadoop任务管理工具\\Catla\\tuning_wordcount",
+					"-clean", "true", 
+					"-group", "wordcount", 
+					"-upload","true",
+					"-uploadjar","true",
+					"-maxinter","1000",
+					"-optimizer","BOBYQA",
+					"-BOBYQA-initTRR","20",
+					"-BOBYQA-stopTRR","1.0e-4"
+				};
+			
+			CatlaRunner.main(args);
+```
+
+Advanced usage please see [here](https://github.com/dhchenx/Catla-HS/blob/master/docs/catla-usage.md)
 
 ## Analysis results using Catla-HS
 ### (1) Exhaustive search
@@ -131,6 +131,26 @@ public class EmbeddedJavaExample {
 1. Powell's method
 2. CMA-ES
 3. Simplex methods
+
+
+## Fitting model:
+
+In Catla-HS, there is an additional component called `PredictorRunner` to facilitate performance change's fitting and predition. With the use of multiple fitting analysis, we can establish the prediction model for evaluating MapReduce job performance. 
+
+## Model support
+
+The component currently supports:
+
+1) linear fitting
+2) multivariate linear fitting
+3) logarithmic fitting
+4) exponential fitting
+5) polynomial fitting
+
+
+An example is below:
+
+![Example of fitting model](images/catla-hs-pred-poly.png)
 
 ## Credits
 This project is established upon the project <a href='https://github.com/apache/hadoop'>Apache Hadoop</a>, <a href='http://commons.apache.org/proper/commons-math/'>Apache Commons Math3</a> and <a href='https://github.com/apache/mina-sshd'>Apache MINA SSHD</a> under <a href='https://www.apache.org/licenses/LICENSE-2.0'>APACHE LICENSE, VERSION 2.0</a>. 

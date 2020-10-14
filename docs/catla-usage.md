@@ -58,3 +58,73 @@ When the tuning process is stopped in the middle, the log aggregation is not fin
  
 ### (5) Analyzing Results
 After job completion, the summaries of job metrics are located in the sub folder “/history” of the project root folder that you run. Then, you can visualize the results from the information of *.csv files in the history folder by using statistics software such as Minitab and MATLAB.<br/> 
+
+## Embedded Java
+An advanced example to demonstrate the full usage of the hadoop task in Java codes, which can be integrated in your application. 
+
+```java
+package cn.edu.bjtu.bigdata.cdh.examples.hpt;
+
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.logging.LogManager;
+import cn.edu.bjtu.bigdata.cdh.hadooptask.HadoopApp;
+import cn.edu.bjtu.bigdata.cdh.hadooptask.HadoopEnv;
+import cn.edu.bjtu.bigdata.cdh.hadooptask.HadoopTask;
+
+public class EmbeddedJavaExample {
+	public static void main(String[] args) {
+		LogManager.getLogManager().reset();
+		//1. setup environment
+		HadoopEnv he = new HadoopEnv();
+		he.setMasterHost("192.168.159.132");//master IP
+		he.setMasterPassword("Passw0rd"); //master user password
+		he.setMasterPort(22); // master port
+		he.setMasterUser("hadoop"); // master user name
+		he.setHadoopBin("/usr/hadoop/bin/hadoop");
+		he.setAppRoot("/usr/hadoop_apps");// all submitted jars will be uploaded to this folder
+
+		//2. Setup MapReduce jobs
+		HadoopTask ht = new HadoopTask();
+		ht.setAsync(true);
+		ht.setJarRemotePath("HPExamples.jar");
+		ht.setMainClass("cn.edu.bjtu.cdh.examples.wordcount.WordCount");
+		ht.setArgs(new String[] { 
+				"/data/cdh/examples/wordcount/input",
+				"/data/cdh/examples/wordcount/output"
+				});
+		ht.setFolderOfSuccessFlag("/data/cdh/examples/wordcount/output"); 
+		ht.setOutputHdfsFolders(new String[] {
+				"/data/cdh/examples/wordcount/output"
+		}); 		
+		ht.setOutputLocalRootFolder("downloads/wordcount"); 
+		
+		//3. init Hadoop cluster
+		HadoopApp ha = new HadoopApp(he);
+		
+		//4. submit task
+		String output_str = ha.submitTask(ht);
+		System.out.println(output_str);
+		
+		//5. detect if the job is finished
+		Timer timer = new Timer();
+		 timer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				boolean success_flag = ha.isSuccess(ht);
+				
+				if(success_flag) {
+					
+					//6. download the analysis results
+					
+					ha.downloadResultToLocal(ht);
+					
+					this.cancel();
+				}
+			}
+		 }, 10*1000, 5*1000);
+	}
+}
+
+```
