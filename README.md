@@ -49,7 +49,7 @@ Example 1: Submit a MapReduce job
 ```java
 	String[] args=new String[] {
 				"-tool","task",
-				"-dir","C:\\Users\\douglaschan\\Desktop\\Hadoop任务管理工具\\Catla\\task_wordcount"
+				"-dir","\\YOUR-FOLDER\\task_wordcount"
 		};
 		
 		CatlaRunner.main(args);
@@ -60,7 +60,7 @@ Example 2: Submit a composite MapReduce tasks with mutiple jobs
 ```java
 		String[] args=new String[] {
 				"-tool","project",
-				"-dir","C:\\Users\\douglaschan\\Desktop\\Hadoop任务管理工具\\Catla\\project_wordcount",
+				"-dir","\\YOUR-FOLDER\\project_wordcount",
 				"-task","pipeline",
 				"-download","true",
 				"-sequence","true"
@@ -74,7 +74,7 @@ Example 3: Tuning using Exhaustive Search
 ```java
 		String[] args = new String[] { 
 					"-tool","tuning",
-					"-dir", "E:\\CatlaHS\\tuning_similarity",
+					"-dir", "\\YOUR-FOLDER\\tuning_similarity",
 					"-clean", "true", 
 					"-group", "wordcount", 
 					"-upload","false", 
@@ -90,7 +90,7 @@ Example 4: Tuning using BOBYQA (a method of derivative-free optimization)
 ```java
 String[]	args = new String[] { 
 					"-tool","optimizer",
-					"-dir", "C:\\Users\\douglaschan\\Desktop\\Hadoop任务管理工具\\Catla\\tuning_wordcount",
+					"-dir", "\\YOUR-FOLDER\\tuning_wordcount",
 					"-clean", "true", 
 					"-group", "wordcount", 
 					"-upload","true",
