@@ -28,7 +28,18 @@ public class JobSummary {
 	
 	public JobSummary(String data_path) {
  
-		this.data_path=data_path;
+		if(data_path.endsWith(".csv")) {
+			this.data_path=data_path;
+		}else {
+			File[] files=new File(new File(data_path).getAbsolutePath()+"/history").listFiles();
+			for(int i=0;i<files.length;i++) {
+				if(files[i].getName().startsWith("timecost_")) {
+					this.data_path=files[i].getAbsolutePath();
+					break;
+				}
+			}
+		}
+		
 	}
 	
 	public static void printTable(String tag,Object[][] data) {
@@ -132,4 +143,55 @@ public class JobSummary {
 
 		}
 	}
+	
+	public String[][][] getDataset(String[] x_fields,String[] y_fields){
+		try {
+
+			List<String[]> data = readMetricFile(
+					new File(data_path));
+
+			String[][] x_data = new String[data.size() - 1][x_fields.length];
+			String[][] y_data = new String[data.size() - 1][y_fields.length];
+
+			int[] x_ids = new int[x_fields.length];
+			int[] y_ids = new int[y_fields.length];
+
+			for (int i = 0; i < x_fields.length; i++) {
+				x_ids[i] = findIdByName(data.get(0), x_fields[i]);
+				
+			}
+			
+			for (int i = 0; i < y_fields.length; i++) {
+				y_ids[i] = findIdByName(data.get(0), y_fields[i]);
+				
+			}
+			
+
+			for (int i = 1; i < data.size(); i++) {
+				for (int j = 0; j < x_ids.length; j++) {
+					x_data[i - 1][j] = data.get(i)[x_ids[j]];
+				}
+				for (int j = 0; j < y_ids.length; j++) {
+					y_data[i - 1][j] = data.get(i)[y_ids[j]];
+				}
+			}
+					
+			printTable("X",x_data);
+			printTable("Y",y_data);
+			
+			String[][][] rets=new String[2][][];
+			rets[0]=x_data;
+			rets[1]=y_data;
+			
+			return rets;
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+
+		}
+		
+		return null;
+	}
+	
+	
 }
