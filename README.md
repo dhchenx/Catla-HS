@@ -16,9 +16,10 @@
 2. <b>Project Runner:</b> To submit a group of MapReduce jobs in an organized project folder and monitor the status of its running until completion; eventually, all analyzing results and their logs that contain information of running time in all MapReduce phrases are downloaded into specified location path in its project folder. 
 3. <b>Optimizer Runner:</b> To create a series of MapReduce jobs with different combinations of parameter values according to parameter configuration files and obtain the optimal parameter values with least time cost after the tuning process is finished. Two tuning processes, namely direct search and derivative-free optimization (DFO) techniques, are supported.
 4. <b>Predictor Runner:</b> To provide multiple prediction models that helps fit the tuning results and predict future performance change of MapReduce jobs. [<font color='red'> New</font>](https://github.com/dhchenx/Catla-HS/blob/master/docs/catla-prediction.md)
-6. <b> Performance visualization tool</b>: A tool that helps users analyze, visualize and decision making according to collected data of tuning jobs. [<font color='red'> New</font>](https://github.com/dhchenx/Catla-HS/blob/master/docs/catla-visualization.md)
-7. <b>CatlaUI</b>: CatlaUI provides user-friendly GUI to perform important functions of Catla-HS. <a href='https://github.com/dhchenx/Catla-HS/tree/master/catla-hs-tools'>here</a>
-8. <b>Machine Learning:</b> To support modeling based on existing machine learning techniques using tuning data and metric data from the tuning process. [<font color='red'> New</font>](https://github.com/dhchenx/Catla-HS/blob/master/catla-hs-machine-learning/README.md)
+6. <b>Performance visualization tool:</b> A tool that helps users analyze, visualize and decision making according to collected data of tuning jobs. [<font color='red'> New</font>](https://github.com/dhchenx/Catla-HS/blob/master/docs/catla-visualization.md)
+7. <b>Performance analysis tool:</b> To support aggregation of MapReduce job profiles and provides a summary of time cost of each phrase in the job. [<font color='red'> New</font>](https://github.com/dhchenx/Catla-HS/blob/master/docs/catla-performance-analysis.md)
+8. <b>Machine Learning mining tool:</b> To support modeling based on existing machine learning techniques using tuning data and metric data from the tuning process. [<font color='red'> New</font>](https://github.com/dhchenx/Catla-HS/blob/master/catla-hs-machine-learning/README.md)
+9. <b>CatlaUI</b>: CatlaUI provides user-friendly GUI to perform important functions of Catla-HS. <a href='https://github.com/dhchenx/Catla-HS/tree/master/catla-hs-tools'>here</a>
 
 ## Flowchart of tuning
 <center>
