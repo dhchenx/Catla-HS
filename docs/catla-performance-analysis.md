@@ -15,7 +15,7 @@ String[] args=new String[] {
 		CatlaRunner.main(args);
 ```
 
-## Metric data
+## Summarize metric data
 
 Then, Catla-HS output serveral `csv` files showing all metrics. 
 
@@ -66,7 +66,7 @@ TimeStamp	Order	mapreduce.task.io.sort.mb	mapreduce.map.sort.spill.percent	total
 
 You can find the above files [here](https://github.com/dhchenx/Catla-HS/tree/master/examples/sample_metric_data)
 
-## Tuning metrics
+## Obtaining tuning metrics
 
 We can compare multiple tuning projects' metric data by running below codes:
 
@@ -89,6 +89,8 @@ tuning_terasort	29172	21682
 tuning_wordcount	110847	98981
 ```
 
+## Visualizing specific metric data
+
 Or you can retrieve specific metric data fields from a job's metric file by using the below codes:
 
 ```java
@@ -99,6 +101,6 @@ Or you can retrieve specific metric data fields from a job's metric file by usin
 	}
 ```
 
-With the use of the visualization tool in Catla-HS, we can visualize the metric data like below:
+With the use of the performance visualization tool in Catla-HS, we can visualize the metric data like below:
 
 ![Visualizing the metric data](../images/catla-job-summary-bar.png)

@@ -134,11 +134,9 @@ Advanced usage please see [here](https://github.com/dhchenx/Catla-HS/blob/master
 3. Simplex methods
 
 
-## Fitting model:
+## Fitting model
 
 In Catla-HS, there is an additional component called `PredictorRunner` to facilitate performance change's fitting and predition. With the use of multiple fitting analysis, we can establish the prediction model for evaluating MapReduce job performance. 
-
-## Model support
 
 The component currently supports:
 

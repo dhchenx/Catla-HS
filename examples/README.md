@@ -1,4 +1,4 @@
-## Examples of Catla
+## Examples of Catla-HS
 Each folder provides an example of use of template rules to organize necessary information to run on Hadoop. 
 
 ## Note
@@ -10,11 +10,11 @@ The information of Hadoop cluster in env_* file(s) should be modified according 
 3) /tuning_wordcount: tuning MapReduce job performance according to the configuration of parameters in /tuning subfolder. 
 
 ## Instructions to run these examples
-1) Open your Windows CMD program; CD to the root folder of '/examples' folder
+1) Open your Windows Command program; CD to the root folder of '/examples' folder
 2) Copy the Catla.jar from '/catla-dist' folder to '/examples' folder
 3) Using the shell code:
 ```bash
-java -jar Catla.jar -tool ...
+java -jar Catla-HS.jar -tool ...
 ```
 The above command is used to run these examples. (Details of the input arguments please see <a href='https://github.com/dhchenx/Catla/blob/master/docs/catla-usage.md'>Usage of Catla</a>)
 
