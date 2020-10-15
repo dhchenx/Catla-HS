@@ -101,4 +101,4 @@ Or you can retrieve specific metric data fields from a job's metric file by usin
 
 With the use of the visualization tool in Catla-HS, we can visualize the metric data like below:
 
-![Visualizing the metric data](https://github.com/dhchenx/Catla-HS/tree/master/images/catla-job-summary-bar.png)
+![Visualizing the metric data](../images/catla-job-summary-bar.png)
